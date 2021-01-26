@@ -2,21 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace TE.BE.City.Domain.Interfaces
 {
     public interface IRepository<T> where T : BaseEntity
     {
-        bool Insert(T request);
+        Task<bool> Insert(T request);
 
-        bool Delete(int id);
+        Task<bool> Delete(int id);
 
-        bool Edit(T entity);
+        Task<bool> Edit(T entity);
 
-        IEnumerable<T> Select();
+        Task<IEnumerable<T>> Select();
 
-        T SelectById(int id);
+        Task<T> SelectById(int id);
 
-        IEnumerable<T> Filter(Func<T, bool> predicate);
+        Task<IEnumerable<T>> Filter(Func<T, bool> predicate);
     }
 }

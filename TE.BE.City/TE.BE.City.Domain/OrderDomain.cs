@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using TE.BE.City.Domain.Entity;
 using TE.BE.City.Domain.Interfaces;
+using System.Threading.Tasks;
 
 namespace TE.BE.City.Domain
 {
     public class OrderDomain : IOrderDomain
     {
-        public void ApplyBusinessRules(OrderEntity tokenEntity)
+        public Task ApplyBusinessRules(OrderEntity tokenEntity)
         {
             // Empty
+            return Task.CompletedTask;
         }
     }
 }

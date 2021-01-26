@@ -4,6 +4,7 @@ using TE.BE.City.Infra.CrossCutting;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Threading.Tasks;
 
 namespace TE.BE.City.Infra.Data.Repository
 {
@@ -16,7 +17,7 @@ namespace TE.BE.City.Infra.Data.Repository
             _context = context;
         }
         
-        public bool Insert(T obj)
+        public async Task<bool> Insert(T obj)
         {
             _context.Set<T>().Add(obj);
             var result = _context.SaveChanges();
@@ -26,7 +27,7 @@ namespace TE.BE.City.Infra.Data.Repository
                 return false;
         }
 
-        public bool Delete(int id)
+        public async Task<bool> Delete(int id)
         {
             var entityToDelete = _context.Set<T>().FirstOrDefault(e => e.Id == id);
             if (entityToDelete != null)
@@ -39,7 +40,7 @@ namespace TE.BE.City.Infra.Data.Repository
             return false;
         }
 
-        public bool Edit(T entity)
+        public async Task<bool> Edit(T entity)
         {
             var editedEntity = _context.Set<T>().FirstOrDefault(e => e.Id == entity.Id);
             
@@ -52,17 +53,17 @@ namespace TE.BE.City.Infra.Data.Repository
                 return false;
         }
 
-        public IEnumerable<T> Select()
+        public async Task<IEnumerable<T>> Select()
         {
             return _context.Set<T>().ToList();
         }
 
-        public T SelectById(int id)
+        public async Task<T> SelectById(int id)
         {
             return _context.Set<T>().FirstOrDefault(e => e.Id == id);
         }
 
-        public IEnumerable<T> Filter(Func<T, bool> predicate)
+        public async Task<IEnumerable<T>> Filter(Func<T, bool> predicate)
         {
             return _context.Set<T>().Where(predicate);
         }

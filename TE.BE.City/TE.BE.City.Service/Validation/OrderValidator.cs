@@ -5,9 +5,9 @@ using TE.BE.City.Domain.Entity;
 
 namespace TE.BE.City.Service.Validation
 {
-    public class ServiceValidator : AbstractValidator<OrderEntity>
+    public class OrderValidator : AbstractValidator<OrderEntity>
     {
-        public ServiceValidator()
+        public OrderValidator()
         {
             RuleFor(c => c)
                     .NotNull()

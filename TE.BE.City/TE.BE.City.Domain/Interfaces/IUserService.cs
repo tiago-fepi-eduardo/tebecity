@@ -6,8 +6,9 @@ using TE.BE.City.Domain.Entity;
 
 namespace TE.BE.City.Domain.Interfaces
 {
-    public interface IOrderDomain
+    public interface IUserService
     {
-        Task ApplyBusinessRules(OrderEntity tokenEntity);
+        Task<UserEntity> Authenticate(string username, string password);
+        Task<IEnumerable<UserEntity>> GetAll();
     }
 }

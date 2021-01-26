@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 using TE.BE.City.Domain.Entity;
 using TE.BE.City.Domain.Interfaces;
 using TE.BE.City.Presentation.Model;
 
 namespace TE.BE.City.Presentation.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class OrderController : BaseController
     {
@@ -25,7 +28,7 @@ namespace TE.BE.City.Presentation.Controllers
         /// </summary>
         /// <param name="request"></param>
         [HttpPost]
-        public ActionResult Post([FromBody]OrderRequestModel request)
+        public async Task<ActionResult> Post([FromBody]OrderRequestModel request)
         {
             try
             {
@@ -34,7 +37,7 @@ namespace TE.BE.City.Presentation.Controllers
                 orderEntity.Longitude = request.Longitude;
                 orderEntity.OcorrencyId = request.OcorrencyId;
 
-                return Response(true, _service.Post(orderEntity));
+                return Response(true, await _service.Post(orderEntity));
             }
             catch (Exception ex)
             {
@@ -47,14 +50,14 @@ namespace TE.BE.City.Presentation.Controllers
         /// </summary>
         /// <param name="id"></param>
         [HttpGet]
-        public ActionResult Get(int id = 0)
+        public async Task<ActionResult> Get(int id = 0)
         {
             try
             {
                 if (id > 0)
-                    return Response(true, _service.GetById(id));
+                    return Response(true, await _service.GetById(id));
                 else
-                    return Response(true, _service.GetAll());
+                    return Response(true, await _service.GetAll());
             }
             catch (Exception ex)
             {
@@ -67,7 +70,7 @@ namespace TE.BE.City.Presentation.Controllers
         /// </summary>
         /// <param name="request"></param>
         [HttpPut]
-        public ActionResult Put([FromBody] OrderRequestModel request)
+        public async Task<ActionResult> Put([FromBody] OrderRequestModel request)
         {
             try
             {
@@ -77,7 +80,7 @@ namespace TE.BE.City.Presentation.Controllers
                 orderEntity.Longitude = request.Longitude;
                 orderEntity.OcorrencyId = request.OcorrencyId;
 
-                return Response(true, _service.Put(orderEntity));
+                return Response(true, await _service.Put(orderEntity));
             }
             catch (Exception ex)
             {
@@ -90,11 +93,11 @@ namespace TE.BE.City.Presentation.Controllers
         /// </summary>
         /// <param name="id"></param>
         [HttpDelete]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {
-                return Response(true, _service.Delete(id));
+                return Response(true, await _service.Delete(id));
             }
             catch (Exception ex)
             {

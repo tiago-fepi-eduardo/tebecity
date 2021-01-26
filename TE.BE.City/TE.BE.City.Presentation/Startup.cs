@@ -8,8 +8,9 @@ using TE.BE.City.Domain;
 using TE.BE.City.Infra.Data;
 using TE.BE.City.Infra.Data.Repository;
 using TE.BE.City.Service.Services;
-using Pomelo.EntityFrameworkCore.MySql.Storage;
-using TE.BE.City.Domain.Entity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace TE.BE.City.Presentation
 {
@@ -38,7 +39,7 @@ namespace TE.BE.City.Presentation
         /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
-            //Add Swagger
+            // Add Swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
@@ -54,11 +55,29 @@ namespace TE.BE.City.Presentation
                 options.EnableDetailedErrors();
             });
 
+            // Configure JWT token authentication and authorization
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["Jwt:Issuer"],
+                        ValidAudience = Configuration["Jwt:Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                    };
+                });
+
             // Dependency injection
             services.AddScoped(typeof(TEBECityContext));
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddScoped(typeof(IOrderService), typeof(OrderService));
             services.AddScoped(typeof(IOrderDomain), typeof(OrderDomain));
+            services.AddScoped(typeof(IUserService), typeof(UserService));
+            services.AddScoped(typeof(IUserDomain), typeof(UserDomain));
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
         }
@@ -75,36 +94,17 @@ namespace TE.BE.City.Presentation
                 app.UseDeveloperExceptionPage();
             }
 
-            //Swagger
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "RDI Token API"); });
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "City API"); });
 
             app.UseMvc();
 
-            // Set swagger as default page
             app.Run(async context => {
                 context.Response.Redirect("swagger/index.html");
             });
-        }
-
-        private void CheckConnections()
-        {
-            //var sqlCon = new SqlConnection(Properties.Settings.Default.sString);
-            //sqlCon.Open();
-            /*
-            var mySQLCon = new MySqlConnection(Configuration.GetConnectionString("DefaultConnection"));
-            mySQLCon.Open();
-            var temp = mySQLCon.State.ToString();
-            
-            if (mySQLCon.State == ConnectionState.Open && temp == "Open")
-            {
-                //MessageBox.Show(@"Connection working.");
-            }
-            else
-            {
-                //MessageBox.Show(@"Please check connection string");
-            }
-            */
         }
     }
 }

@@ -6,8 +6,8 @@ using TE.BE.City.Domain.Entity;
 
 namespace TE.BE.City.Domain.Interfaces
 {
-    public interface IOrderDomain
+    public interface IUserDomain
     {
-        Task ApplyBusinessRules(OrderEntity tokenEntity);
+        Task<string> GenerateJWTToken(UserEntity userEntity);
     }
 }
