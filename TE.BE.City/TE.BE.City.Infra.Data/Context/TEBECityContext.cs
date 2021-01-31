@@ -11,11 +11,13 @@ namespace TE.BE.City.Infra.Data
             //Empty
         }
 
+        public DbSet<UserEntity> Users { get; set; }
         public DbSet<OrderEntity> Orders { get; set; }
         public DbSet<OcorrencyEntity> Ocorrency { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<UserEntity>(new UserEntityMap().Configure);
             modelBuilder.Entity<OrderEntity>(new OrderEntityMap().Configure);
             modelBuilder.Entity<OcorrencyEntity>(new OcorrencyEntityMap().Configure);
             base.OnModelCreating(modelBuilder);

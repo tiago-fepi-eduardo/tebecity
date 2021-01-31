@@ -8,6 +8,5 @@ namespace TE.BE.City.Domain.Entity
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public DateTime CreatedAt { get; set; }
     }
 }

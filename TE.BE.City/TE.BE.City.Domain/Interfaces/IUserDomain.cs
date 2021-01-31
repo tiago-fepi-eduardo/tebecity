@@ -9,5 +9,7 @@ namespace TE.BE.City.Domain.Interfaces
     public interface IUserDomain
     {
         Task<string> GenerateJWTToken(UserEntity userEntity);
+        Task<string> Encrypt(string password);
+        Task<bool> IsValidPassword(string attemptPassword, string savedPassword);
     }
 }

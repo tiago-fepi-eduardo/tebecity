@@ -7,6 +7,7 @@ using System;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using System.Security.Cryptography;
 
 namespace TE.BE.City.Domain
 {
@@ -31,6 +32,30 @@ namespace TE.BE.City.Domain
               signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<string> Encrypt(string password)
+        {
+            // Calcular o Hash
+            MD5 md5 = MD5.Create();
+            byte[] inputBytes = Encoding.ASCII.GetBytes(password);
+            byte[] hash = md5.ComputeHash(inputBytes);
+
+            // Converter byte array para string hexadecimal
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("X2"));
+            }
+            return sb.ToString();
+        }
+
+        public async Task<bool> IsValidPassword(string attemptPassword, string savedPassword)
+        {
+            if (await Encrypt(attemptPassword) == savedPassword)
+                return true;
+            else
+                return false;
         }
     }
 }

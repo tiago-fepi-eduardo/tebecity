@@ -10,6 +10,5 @@ namespace TE.BE.City.Domain.Entity
         public string Latitude { get; set; }
         public int OcorrencyId { get; set; }
         public OcorrencyEntity Ocorrency { get; set; }
-        public DateTime CreatedAt { get; set; }
     }
 }

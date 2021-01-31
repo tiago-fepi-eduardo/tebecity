@@ -103,7 +103,14 @@ namespace TE.BE.City.Service.Services
         /// <returns></returns>
         public async Task<bool> Delete(int id)
         {
-            return await _repository.Delete(id);
+            try
+            {
+                return await _repository.Delete(id);
+            }
+            catch (ExecptionHelper.ExceptionService ex)
+            {
+                throw new ExecptionHelper.ExceptionService(ex.Message);
+            }
         }
 
         /// <summary>

@@ -8,7 +8,11 @@ namespace TE.BE.City.Domain.Interfaces
 {
     public interface IUserService
     {
-        Task<UserEntity> Authenticate(string username, string password);
+        Task<UserEntity> Authenticate(string username, string password);       
+        Task<bool> Post(UserEntity request);
+        Task<bool> Put(UserEntity request);
+        Task<bool> Delete(int id);
         Task<IEnumerable<UserEntity>> GetAll();
+        Task<UserEntity> GetById(int id);
     }
 }
