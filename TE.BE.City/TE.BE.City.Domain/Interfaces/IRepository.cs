@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace TE.BE.City.Domain.Interfaces
 {
@@ -18,6 +19,6 @@ namespace TE.BE.City.Domain.Interfaces
 
         Task<T> SelectById(int id);
 
-        Task<IEnumerable<T>> Filter(Func<T, bool> predicate);
+        Task<IEnumerable<T>> Filter(Expression<Func<T, bool>> predicate);
     }
 }

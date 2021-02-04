@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using TE.BE.City.Domain.Entity;
 using TE.BE.City.Domain.Interfaces;
 using TE.BE.City.Infra.CrossCutting;
+using System.Linq;
 
 namespace TE.BE.City.Service.Services
 {
@@ -20,20 +21,21 @@ namespace TE.BE.City.Service.Services
         }
         public async Task<UserEntity> Authenticate(string username, string password)
         {
-            // validate to db.
-            var user = new UserEntity()
+            try
             {
-                Id = 1,
-                FirstName = "Joe",
-                LastName = "Ramone",
-                Username = "r",
-                Password = "123"
-            };
-            
-            // generate token to access
-            user.Token = await _serviceDomain.GenerateJWTToken(user);
-            
-            return user;
+                var userDb = (await _repository.Filter(c => c.Username == username)).FirstOrDefault();
+
+                if (userDb != null && await _serviceDomain.IsValidPassword(password, userDb.Password))
+                    userDb.Token = await _serviceDomain.GenerateJWTToken(userDb);
+                else
+                    throw new ExecptionHelper.ExceptionService("User/Password invalid.");
+
+                return userDb;
+            }
+            catch (ExecptionHelper.ExceptionService ex)
+            {
+                throw new ExecptionHelper.ExceptionService(ex.Message);
+            }
         }
 
         public async Task<bool> Delete(int id)
