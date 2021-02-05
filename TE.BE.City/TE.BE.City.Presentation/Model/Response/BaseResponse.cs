@@ -9,5 +9,6 @@ namespace TE.BE.City.Presentation.Model
     {
         public int Id { get; set; }
         public DateTime CreatedAt { get; set; }
+        public BaseErrorResponse Error { get; set; }
     }
 }

@@ -36,12 +36,22 @@ namespace TE.BE.City.Infra.Data.Mappings
                 .HasColumnName("password")
                 .HasColumnType("varchar(100)");
 
-            builder.Ignore(c => c.Token);
+            builder.Property(c => c.Active)
+                .HasColumnName("active")
+                .HasColumnType("bit");
+
+            builder.Property(c => c.Block)
+                .HasColumnName("block")
+                .HasColumnType("bit");
 
             builder.Property(c => c.CreatedAt)
                 .IsRequired()
                 .HasColumnName("createdAt")
                 .HasColumnType("datetime");
+
+            builder.Ignore(c => c.Token);
+
+            builder.Ignore(c => c.Error);
         }
     }
 }

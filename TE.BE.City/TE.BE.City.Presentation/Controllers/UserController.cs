@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TE.BE.City.Domain.Entity;
 using TE.BE.City.Domain.Interfaces;
+using TE.BE.City.Infra.CrossCutting.Enum;
 using TE.BE.City.Presentation.Model.Request;
+using TE.BE.City.Presentation.Model.Response;
 
 namespace TE.BE.City.Presentation.Controllers
 {
@@ -14,23 +16,39 @@ namespace TE.BE.City.Presentation.Controllers
     [Route("api/[controller]")]
     public class UserController : BaseController
     {
+        private readonly IMapper _mapper;
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IMapper mapper)
         {
             _userService = userService;
+            _mapper = mapper;
         }
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public async Task<IActionResult> Authenticate([FromBody] AuthenticateRequestModel model)
+        public async Task<AuthenticateResponseModel> Authenticate([FromBody] AuthenticateRequestModel model)
         {
-            var user = await _userService.Authenticate(model.Username, model.Password);
+            var authenticateResponseModel = new AuthenticateResponseModel();
+            
+            var userEntity = await _userService.Authenticate(model.Username, model.Password);
 
-            if (user == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
+            _mapper.Map(userEntity, authenticateResponseModel);
 
-            return Ok(user);
+            if (userEntity == null)
+            {
+                return new AuthenticateResponseModel()
+                {
+                    Error = new Model.BaseErrorResponse()
+                    {
+                        Code = (int)ErrorCode.UserNotIdentified,
+                        Type = ErrorCode.UserNotIdentified.ToString(),
+                        Message = ErrorCode.UserNotIdentified.ToString()
+                    }
+                };
+            }
+
+            return authenticateResponseModel;
         }
 
         /// <summary>
@@ -61,19 +79,39 @@ namespace TE.BE.City.Presentation.Controllers
         /// </summary>
         /// <param name="id"></param>
         [HttpGet]
-        public async Task<ActionResult> Get(int id = 0)
+        public async Task<IEnumerable<UserResponseModel>> Get(int id = 0)
         {
+            var usersResponseModel = new List<UserResponseModel>();
+            
             try
             {
                 if (id > 0)
-                    return Response(true, await _userService.GetById(id));
+                {
+                    var userEntity = await _userService.GetById(id);
+                    _mapper.Map(userEntity, usersResponseModel);
+                }
                 else
-                    return Response(true, await _userService.GetAll());
+                {
+                    var usersEntity = await _userService.GetAll();
+                    _mapper.Map(usersEntity, usersResponseModel);
+                }
             }
             catch (Exception ex)
             {
-                return Response(false, ex.Message);
+                var exception = new UserResponseModel()
+                {
+                    Error = new Model.BaseErrorResponse()
+                    {
+                        Code = ex.HResult,
+                        Type = ex.StackTrace,
+                        Message = ex.Message
+                    }
+                };
+                usersResponseModel.Add(exception);
+                return usersResponseModel;
             }
+
+            return usersResponseModel;
         }
 
         /// <summary>

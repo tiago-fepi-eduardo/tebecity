@@ -10,6 +10,8 @@ namespace TE.BE.City.Domain.Entity
         public string LastName { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        public bool Active { get; set; }
+        public bool Block { get; set; }
         public string Token { get; set; }
     }
 }

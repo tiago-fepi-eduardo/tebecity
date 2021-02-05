@@ -8,5 +8,6 @@ namespace TE.BE.City.Domain.Entity
     {
         public int Id { get; set; }
         public DateTime CreatedAt { get; set; }
+        public BaseErrorEntity Error { get; set; }
     }
 }

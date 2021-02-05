@@ -11,6 +11,8 @@ using TE.BE.City.Service.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using AutoMapper;
+using TE.BE.City.Presentation.Mappings;
 
 namespace TE.BE.City.Presentation
 {
@@ -71,6 +73,14 @@ namespace TE.BE.City.Presentation
                     };
                 });
 
+            // Auto Mapper Configurations
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
             // Dependency injection
             services.AddScoped(typeof(TEBECityContext));
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
@@ -78,7 +88,7 @@ namespace TE.BE.City.Presentation
             services.AddScoped(typeof(IOrderDomain), typeof(OrderDomain));
             services.AddScoped(typeof(IUserService), typeof(UserService));
             services.AddScoped(typeof(IUserDomain), typeof(UserDomain));
-
+                        
             services.AddMvc(option => option.EnableEndpointRouting = false);
         }
 

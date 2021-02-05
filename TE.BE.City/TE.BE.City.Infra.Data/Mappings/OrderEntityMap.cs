@@ -32,6 +32,8 @@ namespace TE.BE.City.Infra.Data.Mappings
                 .IsRequired()
                 .HasColumnName("createdAt")
                 .HasColumnType("datetime");
+
+            builder.Ignore(c => c.Error);
         }
     }
 }
