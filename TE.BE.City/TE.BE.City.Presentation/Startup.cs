@@ -88,7 +88,9 @@ namespace TE.BE.City.Presentation
             services.AddScoped(typeof(IOrderDomain), typeof(OrderDomain));
             services.AddScoped(typeof(IUserService), typeof(UserService));
             services.AddScoped(typeof(IUserDomain), typeof(UserDomain));
-                        
+            services.AddScoped(typeof(IAboutService), typeof(AboutService));
+            services.AddScoped(typeof(IContactService), typeof(ContactService));
+
             services.AddMvc(option => option.EnableEndpointRouting = false);
         }
 
@@ -102,8 +104,13 @@ namespace TE.BE.City.Presentation
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseCors(x => x
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+                app.UseHttpsRedirection();
             }
-
+            
             app.UseAuthentication();
             app.UseAuthorization();
 
