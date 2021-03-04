@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TE.BE.City.Domain.Entity
+namespace TE.BE.City.Infra.CrossCutting
 {
-    public class BaseErrorEntity
+    public class ErrorDetail
     {
         public int Code { get; set; }
         public string Type { get; set; }

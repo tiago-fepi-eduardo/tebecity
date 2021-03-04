@@ -37,12 +37,14 @@ namespace TE.BE.City.Presentation.Controllers
             }
             catch (Exception ex)
             {
+                /*
                 aboutResponseModel.Error = new Model.BaseErrorResponse()
                 {
                     Code = ex.HResult,
                     Type = ex.StackTrace,
                     Message = ex.Message
                 };
+                */
             }
 
             return aboutResponseModel;

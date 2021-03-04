@@ -73,12 +73,14 @@ namespace TE.BE.City.Presentation.Controllers
             {
                 var exception = new ContactResponseModel()
                 {
+                    /*
                     Error = new Model.BaseErrorResponse()
                     {
                         Code = ex.HResult,
                         Type = ex.StackTrace,
                         Message = ex.Message
                     }
+                    */
                 };
                 usersResponseModel.Add(exception);
                 return usersResponseModel;

@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
+using System.Collections.Generic;
 
 namespace TE.BE.City.Domain
 {
@@ -25,9 +26,18 @@ namespace TE.BE.City.Domain
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+            Claim claimName = new Claim("fullName", userEntity.FirstName + userEntity.LastName);
+            Claim claimRole = new Claim("role", "admin");
+            Claim claimEmail = new Claim("email", userEntity.Username);
+            IList<Claim> Claims = new List<Claim>() {
+                 claimName,
+                 claimRole,
+                 claimEmail
+            };
+                        
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
               _config["Jwt:Issuer"],
-              null,
+              Claims,
               expires: DateTime.Now.AddMinutes(120),
               signingCredentials: credentials);
 

@@ -13,9 +13,9 @@ namespace TE.BE.City.Presentation.Mappings
         public MappingProfile()
         {
             CreateMap<UserEntity, UserResponseModel>();
-            CreateMap<UserEntity, AuthenticateResponseModel>();
             CreateMap<AboutEntity, AboutResponseModel>();
             CreateMap<ContactEntity, ContactResponseModel>();
+            CreateMap<UserEntity, AuthenticateResponseModel>();
         }
     }
 }

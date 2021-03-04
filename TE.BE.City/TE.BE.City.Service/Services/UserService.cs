@@ -6,6 +6,7 @@ using TE.BE.City.Domain.Entity;
 using TE.BE.City.Domain.Interfaces;
 using TE.BE.City.Infra.CrossCutting;
 using System.Linq;
+using TE.BE.City.Infra.CrossCutting.Enum;
 
 namespace TE.BE.City.Service.Services
 {
@@ -28,7 +29,15 @@ namespace TE.BE.City.Service.Services
                 if (userDb != null && await _serviceDomain.IsValidPassword(password, userDb.Password))
                     userDb.Token = await _serviceDomain.GenerateJWTToken(userDb);
                 else
-                    throw new ExecptionHelper.ExceptionService("User/Password invalid.");
+                {
+                    userDb = new UserEntity();
+                    userDb.Error = new ErrorDetail()
+                    {
+                        Code = (int)ErrorCode.UserNotIdentified,
+                        Type = ErrorCode.UserNotIdentified.ToString(),
+                        Message = ErrorCode.UserNotIdentified.GetDescription()
+                    };
+                }
 
                 return userDb;
             }

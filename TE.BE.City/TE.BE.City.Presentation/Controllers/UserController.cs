@@ -35,19 +35,6 @@ namespace TE.BE.City.Presentation.Controllers
 
             _mapper.Map(userEntity, authenticateResponseModel);
 
-            if (userEntity == null)
-            {
-                return new AuthenticateResponseModel()
-                {
-                    Error = new Model.BaseErrorResponse()
-                    {
-                        Code = (int)ErrorCode.UserNotIdentified,
-                        Type = ErrorCode.UserNotIdentified.ToString(),
-                        Message = ErrorCode.UserNotIdentified.ToString()
-                    }
-                };
-            }
-
             return authenticateResponseModel;
         }
 
@@ -55,6 +42,7 @@ namespace TE.BE.City.Presentation.Controllers
         /// Post new user.
         /// </summary>
         /// <param name="request"></param>
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] UserRequestModel request)
         {
@@ -100,12 +88,12 @@ namespace TE.BE.City.Presentation.Controllers
             {
                 var exception = new UserResponseModel()
                 {
-                    Error = new Model.BaseErrorResponse()
-                    {
-                        Code = ex.HResult,
-                        Type = ex.StackTrace,
-                        Message = ex.Message
-                    }
+                    //Error = new Model.BaseErrorResponse()
+                    //{
+                    //    Code = ex.HResult,
+                    //    Type = ex.StackTrace,
+                    //    Message = ex.Message
+                    //}
                 };
                 usersResponseModel.Add(exception);
                 return usersResponseModel;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TE.BE.City.Infra.CrossCutting;
 
 namespace TE.BE.City.Presentation.Model
 {
@@ -9,6 +10,6 @@ namespace TE.BE.City.Presentation.Model
     {
         public int Id { get; set; }
         public DateTime CreatedAt { get; set; }
-        public BaseErrorResponse Error { get; set; }
+        public ErrorDetail Error { get; set; }
     }
 }
