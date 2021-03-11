@@ -49,6 +49,11 @@ namespace TE.BE.City.Infra.Data.Mappings
                 .HasColumnName("createdAt")
                 .HasColumnType("datetime");
 
+            builder.Property(c => c.Role)
+                .IsRequired()
+                .HasColumnName("role")
+                .HasColumnType("int");
+
             builder.Ignore(c => c.Token);
 
             builder.Ignore(c => c.Error);

@@ -6,12 +6,14 @@ using TE.BE.City.Domain.Entity;
 using TE.BE.City.Domain.Interfaces;
 using TE.BE.City.Infra.CrossCutting;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using TE.BE.City.Infra.CrossCutting.Enum;
 
 namespace TE.BE.City.Service.Services
 {
     public class ContactService : IContactService
     {
-        private IRepository<ContactEntity> _repository;
+        private readonly IRepository<ContactEntity> _repository;
         
         public ContactService(IRepository<ContactEntity> repository)
         {
@@ -42,11 +44,42 @@ namespace TE.BE.City.Service.Services
             }
         }
 
-        public async Task<ContactEntity> GetById(int id)
+        public async Task<IEnumerable<ContactEntity>> GetById(int id)
         {
             try
             {
-                return await _repository.SelectById(id);
+                var contactsEntity = new List<ContactEntity>();
+                var result =  await _repository.SelectById(id);
+
+                if(result != null)
+                    contactsEntity.Add(result);
+                else
+                {
+                    var contactEntity = new ContactEntity()
+                    {
+                        Error = new ErrorDetail()
+                        {
+                            Code = (int)ErrorCode.SearchHasNoResult,
+                            Type = ErrorCode.SearchHasNoResult.ToString(),
+                            Message = ErrorCode.SearchHasNoResult.GetDescription()
+                        }
+                    };
+                    contactsEntity.Add(contactEntity);
+                }
+
+                return contactsEntity;
+            }
+            catch (ExecptionHelper.ExceptionService ex)
+            {
+                throw new ExecptionHelper.ExceptionService(ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<ContactEntity>> GetClosed(bool closed)
+        {
+            try
+            {
+                return await _repository.Filter(c => c.Closed == closed);
             }
             catch (ExecptionHelper.ExceptionService ex)
             {
@@ -56,7 +89,14 @@ namespace TE.BE.City.Service.Services
 
         public async Task<bool> Post(ContactEntity request)
         {
-            return await _repository.Insert(request);
+            try
+            {
+                return await _repository.Insert(request);
+            }
+            catch (ExecptionHelper.ExceptionService ex)
+            {
+                throw new ExecptionHelper.ExceptionService(ex.Message);
+            }
         }
 
         public async Task<bool> Put(ContactEntity request)

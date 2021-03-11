@@ -11,5 +11,6 @@ namespace TE.BE.City.Presentation.Model.Request
         public string Message { get; set; }
         [Required]
         public string Email { get; set; }
+        public bool? Closed { get; set; }
     }
 }

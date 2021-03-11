@@ -7,5 +7,6 @@ namespace TE.BE.City.Presentation.Model.Response
         public string Subject { get; set; }
         public string Message { get; set; }
         public string Email { get; set; }
+        public bool Closed { get; set; }
     }
 }

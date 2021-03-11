@@ -8,7 +8,7 @@ namespace TE.BE.City.Domain.Interfaces
 {
     public interface IOrderService
     {
-        Task<bool> Post(OrderEntity request);
+        Task<OrderEntity> Post(OrderEntity request);
         Task<bool> Put(OrderEntity request);
         Task<bool> Delete(int id);
         Task<IEnumerable<OrderEntity>> GetAll();

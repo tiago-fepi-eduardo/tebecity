@@ -10,5 +10,16 @@ namespace TE.BE.City.Domain.Entity
         public int Id { get; set; }
         public DateTime CreatedAt { get; set; }
         public ErrorDetail Error { get; set; }
+
+        public bool IsSuccess
+        {
+            get
+            {
+                if (Error == null)
+                    return true;
+                else
+                    return false;
+            }
+        }
     }
 }

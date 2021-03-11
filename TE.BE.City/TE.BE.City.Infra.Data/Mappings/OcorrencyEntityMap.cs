@@ -29,6 +29,7 @@ namespace TE.BE.City.Infra.Data.Mappings
                 .HasColumnType("datetime");
 
             builder.Ignore(c => c.Error);
+            builder.Ignore(c => c.OcorrencyDetail);
         }
     }
 }

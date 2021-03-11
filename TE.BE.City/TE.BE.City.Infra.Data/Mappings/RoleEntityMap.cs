@@ -1,28 +1,30 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Collections.Generic;
+using System.Text;
 using TE.BE.City.Domain.Entity;
 
 namespace TE.BE.City.Infra.Data.Mappings
 {
-    public class OcorrencyDetailEntityMap : IEntityTypeConfiguration<OcorrencyDetailEntity>
+    public class RoleEntityMap : IEntityTypeConfiguration<RoleEntity>
     {
-        public void Configure(EntityTypeBuilder<OcorrencyDetailEntity> builder)
+        public void Configure(EntityTypeBuilder<RoleEntity> builder)
         {
-            builder.ToTable("ocorrencyDetail");
-                
+            builder.ToTable("role");
+
             builder.HasKey(c => c.Id)
                 .HasName("id");
 
-            builder.Property(c => c.Description)
+            builder.Property(c => c.Name)
                 .IsRequired()
-                .HasColumnName("description")
+                .HasColumnName("name")
                 .HasColumnType("varchar(100)");
 
-            builder.Property(c => c.OcorrencyId)
-                .IsRequired()
-                .HasColumnName("ocorrencyId")
-                .HasColumnType("int");
-
+            builder.Property(c => c.Description)
+                .HasColumnName("description")
+                .HasColumnType("varchar(100)");
+            
             builder.Property(c => c.CreatedAt)
                 .IsRequired()
                 .HasColumnName("createdAt")

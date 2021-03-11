@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http.Headers;
 using TE.BE.City.Domain.Entity;
 using TE.BE.City.Domain.Interfaces;
-using TE.BE.City.Infra.CrossCutting.Enum;
 using TE.BE.City.Presentation.Model.Request;
 using TE.BE.City.Presentation.Model.Response;
 
@@ -34,7 +35,7 @@ namespace TE.BE.City.Presentation.Controllers
             var userEntity = await _userService.Authenticate(model.Username, model.Password);
 
             _mapper.Map(userEntity, authenticateResponseModel);
-
+            
             return authenticateResponseModel;
         }
 
@@ -46,20 +47,19 @@ namespace TE.BE.City.Presentation.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] UserRequestModel request)
         {
-            try
-            {
-                UserEntity userEntity = new UserEntity();
-                userEntity.FirstName = request.FirstName;
-                userEntity.LastName = request.LastName;
-                userEntity.Username = request.Username;
-                userEntity.Password = request.Password;
+            var userEntity = new UserEntity();
+            userEntity.FirstName = request.FirstName;
+            userEntity.LastName = request.LastName;
+            userEntity.Username = request.Username;
+            userEntity.Password = request.Password;
+            userEntity.Active = true;
+            userEntity.Block = false;
+            userEntity.Role = request.Role;
+            userEntity.CreatedAt = DateTime.Now.ToUniversalTime();
 
-                return Response(true, await _userService.Post(userEntity));
-            }
-            catch (Exception ex)
-            {
-                return Response(false, ex.Message);
-            }
+            var result = await _userService.Post(userEntity);
+
+            return Response(result.IsSuccess, result);
         }
 
         /// <summary>
@@ -70,35 +70,18 @@ namespace TE.BE.City.Presentation.Controllers
         public async Task<IEnumerable<UserResponseModel>> Get(int id = 0)
         {
             var usersResponseModel = new List<UserResponseModel>();
+           
+            if (id > 0)
+            {
+                var userEntity = await _userService.GetById(id);
+                _mapper.Map(userEntity, usersResponseModel);
+            }
+            else
+            {
+                var usersEntity = await _userService.GetAll();
+                _mapper.Map(usersEntity, usersResponseModel);
+            }
             
-            try
-            {
-                if (id > 0)
-                {
-                    var userEntity = await _userService.GetById(id);
-                    _mapper.Map(userEntity, usersResponseModel);
-                }
-                else
-                {
-                    var usersEntity = await _userService.GetAll();
-                    _mapper.Map(usersEntity, usersResponseModel);
-                }
-            }
-            catch (Exception ex)
-            {
-                var exception = new UserResponseModel()
-                {
-                    //Error = new Model.BaseErrorResponse()
-                    //{
-                    //    Code = ex.HResult,
-                    //    Type = ex.StackTrace,
-                    //    Message = ex.Message
-                    //}
-                };
-                usersResponseModel.Add(exception);
-                return usersResponseModel;
-            }
-
             return usersResponseModel;
         }
 
@@ -109,21 +92,16 @@ namespace TE.BE.City.Presentation.Controllers
         [HttpPut]
         public async Task<ActionResult> Put([FromBody] UserRequestModel request)
         {
-            try
-            {
-                UserEntity userEntity = new UserEntity();
-                userEntity.Id = request.Id;
-                userEntity.FirstName = request.FirstName;
-                userEntity.LastName = request.LastName;
-                userEntity.Username = request.Username;
-                userEntity.Password = request.Password;
+            UserEntity userEntity = new UserEntity();
+            userEntity.Id = request.Id;
+            userEntity.FirstName = request.FirstName;
+            userEntity.LastName = request.LastName;
+            userEntity.Username = request.Username;
+            userEntity.Password = request.Password;
+            userEntity.Role = request.Role;
+            userEntity.CreatedAt = DateTime.Now.ToUniversalTime();
 
-                return Response(true, await _userService.Put(userEntity));
-            }
-            catch (Exception ex)
-            {
-                return Response(false, ex.Message);
-            }
+            return Response(true, await _userService.Put(userEntity));
         }
 
         /// <summary>
@@ -133,14 +111,7 @@ namespace TE.BE.City.Presentation.Controllers
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)
         {
-            try
-            {
-                return Response(true, await _userService.Delete(id));
-            }
-            catch (Exception ex)
-            {
-                return Response(false, ex.Message);
-            }
+            return Response(true, await _userService.Delete(id));
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TE.BE.City.Domain.Entity;
 using TE.BE.City.Domain.Interfaces;
 using TE.BE.City.Infra.CrossCutting;
+using TE.BE.City.Infra.CrossCutting.Enum;
 using TE.BE.City.Service.Validation;
 
 namespace TE.BE.City.Service.Services
@@ -30,18 +31,29 @@ namespace TE.BE.City.Service.Services
         /// Insert new item on the database
         /// </summary>
         /// <param name="request"></param>
-        public async Task<bool> Post(OrderEntity request)
+        public async Task<OrderEntity> Post(OrderEntity request)
         {
             try
             {
-                var result = Validate(request);
-
-                if (!result.IsValid)
-                    throw new ExecptionHelper.ExceptionService(result.Errors[0].ToString());
+                var orderEntity = new OrderEntity();
 
                 await _serviceDomain.ApplyBusinessRules(request);
 
-                return await _repository.Insert(request);
+                var result = await _repository.Insert(request);
+
+                if (result)
+                    return orderEntity;
+                else
+                {
+                    orderEntity.Error = new ErrorDetail()
+                    {
+                        Code = (int) ErrorCode.CreateOrderFail,
+                        Type = ErrorCode.CreateOrderFail.ToString(),
+                        Message = ErrorCode.CreateOrderFail.GetDescription()
+                    };
+                    
+                    return orderEntity;
+                }
             }
             catch (ExecptionHelper.ExceptionService ex)
             {

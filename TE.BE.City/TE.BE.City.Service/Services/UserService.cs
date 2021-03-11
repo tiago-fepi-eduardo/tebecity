@@ -83,11 +83,25 @@ namespace TE.BE.City.Service.Services
             }
         }
 
-        public async Task<bool> Post(UserEntity request)
+        public async Task<UserEntity> Post(UserEntity request)
         {
+            var userEntity = new UserEntity();
+
             request.Password = await _serviceDomain.Encrypt(request.Password);
 
-            return await _repository.Insert(request);
+            var result = await _repository.Insert(request);
+            if (result)
+                return userEntity;
+            else
+            {
+                userEntity.Error = new ErrorDetail()
+                {
+                    Code = 1,
+                    Type = "",
+                    Message = ""
+                };
+                return userEntity;
+            }
         }
 
         public async Task<bool> Put(UserEntity request)

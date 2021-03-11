@@ -28,6 +28,10 @@ namespace TE.BE.City.Infra.Data.Mappings
                 .HasColumnName("email")
                 .HasColumnType("varchar(100)");
 
+            builder.Property(c => c.Closed)
+                .HasColumnName("closed")
+                .HasColumnType("bool");
+
             builder.Property(c => c.CreatedAt)
                 .IsRequired()
                 .HasColumnName("createdAt")

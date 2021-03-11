@@ -32,12 +32,17 @@ namespace TE.BE.City.Presentation.Controllers
         {
             try
             {
-                OrderEntity orderEntity = new OrderEntity();
+                var orderEntity = new OrderEntity();
                 orderEntity.Latitude = request.Latitude;
                 orderEntity.Longitude = request.Longitude;
+                orderEntity.OrderStatusId = request.OrderStatusId;
                 orderEntity.OcorrencyId = request.OcorrencyId;
+                orderEntity.OcorrencyDetailId = request.OcorrencyDetailId;
+                orderEntity.CreatedAt = DateTime.Now.ToUniversalTime();
 
-                return Response(true, await _service.Post(orderEntity));
+                var result = await _service.Post(orderEntity);
+
+                return Response(result.IsSuccess, result);
             }
             catch (Exception ex)
             {

@@ -13,5 +13,7 @@ namespace TE.BE.City.Presentation.Model.Request
         public string Username { get; set; }
         [Required]
         public string Password { get; set; }
+        [Required]
+        public int Role { get; set; }
     }
 }

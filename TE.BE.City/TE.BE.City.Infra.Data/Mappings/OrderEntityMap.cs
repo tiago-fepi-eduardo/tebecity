@@ -28,12 +28,24 @@ namespace TE.BE.City.Infra.Data.Mappings
                 .HasColumnName("ocorrencyId")
                 .HasColumnType("int");
 
+            builder.Property(c => c.OcorrencyDetailId)
+                .IsRequired()
+                .HasColumnName("ocorrencyDetailId")
+                .HasColumnType("int");
+
+            builder.Property(c => c.OrderStatusId)
+                .IsRequired()
+                .HasColumnName("orderStatusId")
+                .HasColumnType("int");
+
             builder.Property(c => c.CreatedAt)
                 .IsRequired()
                 .HasColumnName("createdAt")
                 .HasColumnType("datetime");
 
             builder.Ignore(c => c.Error);
+            builder.Ignore(c => c.Ocorrency);
+            builder.Ignore(c => c.OrderStatus);
         }
     }
 }

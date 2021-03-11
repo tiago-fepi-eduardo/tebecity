@@ -24,7 +24,7 @@ namespace TE.BE.City.Presentation.Controllers
             _contactService = contactService;
             _mapper = mapper;
         }
-        
+
         /// <summary>
         /// Post new user.
         /// </summary>
@@ -32,19 +32,14 @@ namespace TE.BE.City.Presentation.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] ContactRequestModel request)
         {
-            try
-            {
-                var contactEntity = new ContactEntity();
-                contactEntity.Subject = request.Subject;
-                contactEntity.Message = request.Message;
-                contactEntity.Email = request.Email;
-                
-                return Response(true, await _contactService.Post(contactEntity));
-            }
-            catch (Exception ex)
-            {
-                return Response(false, ex.Message);
-            }
+            var contactEntity = new ContactEntity();
+            contactEntity.Subject = request.Subject;
+            contactEntity.Message = request.Message;
+            contactEntity.Email = request.Email;
+            contactEntity.Closed = false;
+            contactEntity.CreatedAt = DateTime.Now.ToUniversalTime();
+
+            return Response(true, await _contactService.Post(contactEntity));
         }
 
         /// <summary>
@@ -52,40 +47,26 @@ namespace TE.BE.City.Presentation.Controllers
         /// </summary>
         /// <param name="id"></param>
         [HttpGet]
-        public async Task<IEnumerable<ContactResponseModel>> Get(int id = 0)
+        public async Task<IEnumerable<ContactResponseModel>> Get([FromBody] ContactRequestModel request)
         {
             var usersResponseModel = new List<ContactResponseModel>();
             
-            try
+            if (request.Id > 0)
             {
-                if (id > 0)
-                {
-                    var userEntity = await _contactService.GetById(id);
-                    _mapper.Map(userEntity, usersResponseModel);
-                }
-                else
-                {
-                    var usersEntity = await _contactService.GetAll();
-                    _mapper.Map(usersEntity, usersResponseModel);
-                }
+                var userEntity = await _contactService.GetById(request.Id);
+                _mapper.Map(userEntity, usersResponseModel);
             }
-            catch (Exception ex)
+            else if (request.Closed != null)
             {
-                var exception = new ContactResponseModel()
-                {
-                    /*
-                    Error = new Model.BaseErrorResponse()
-                    {
-                        Code = ex.HResult,
-                        Type = ex.StackTrace,
-                        Message = ex.Message
-                    }
-                    */
-                };
-                usersResponseModel.Add(exception);
-                return usersResponseModel;
+                var userEntity = await _contactService.GetClosed((bool)request.Closed);
+                _mapper.Map(userEntity, usersResponseModel);
             }
-
+            else
+            {
+                var usersEntity = await _contactService.GetAll();
+                _mapper.Map(usersEntity, usersResponseModel);
+            }
+            
             return usersResponseModel;
         }
 
@@ -96,20 +77,15 @@ namespace TE.BE.City.Presentation.Controllers
         [HttpPut]
         public async Task<ActionResult> Put([FromBody] ContactRequestModel request)
         {
-            try
-            {
-                var contactEntity = new ContactEntity();
-                contactEntity.Id = request.Id;
-                contactEntity.Subject = request.Subject;
-                contactEntity.Message = request.Message;
-                contactEntity.Email = request.Email;
+            var contactEntity = new ContactEntity();
+            contactEntity.Id = request.Id;
+            contactEntity.Subject = request.Subject;
+            contactEntity.Message = request.Message;
+            contactEntity.Email = request.Email;
+            contactEntity.Closed = (bool)request.Closed;
+            contactEntity.CreatedAt = DateTime.Now.ToUniversalTime();
 
-                return Response(true, await _contactService.Put(contactEntity));
-            }
-            catch (Exception ex)
-            {
-                return Response(false, ex.Message);
-            }
+            return Response(true, await _contactService.Put(contactEntity));
         }
 
         /// <summary>
@@ -119,14 +95,7 @@ namespace TE.BE.City.Presentation.Controllers
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)
         {
-            try
-            {
-                return Response(true, await _contactService.Delete(id));
-            }
-            catch (Exception ex)
-            {
-                return Response(false, ex.Message);
-            }
+            return Response(true, await _contactService.Delete(id));
         }
     }
 }

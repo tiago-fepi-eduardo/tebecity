@@ -12,5 +12,7 @@ namespace TE.BE.City.Presentation.Model
         public string Longitude { get; set; }
         public string Latitude { get; set; }
         public int OcorrencyId { get; set; }
+        public int OcorrencyDetailId { get; set; }
+        public int OrderStatusId { get; set; }
     }   
 }

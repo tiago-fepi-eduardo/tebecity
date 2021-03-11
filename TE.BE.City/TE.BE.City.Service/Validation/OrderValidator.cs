@@ -24,9 +24,9 @@ namespace TE.BE.City.Service.Validation
                 .NotEmpty().WithMessage("Longitude necessary to inform.")
                 .NotNull().WithMessage("Longitude necessary to inform.");
 
-            RuleFor(c => c.OcorrencyId)
-                .NotEmpty().WithMessage("OcorrencyId necessary to inform.")
-                .NotNull().WithMessage("OcorrencyId necessary to inform.");
+            //RuleFor(c => c.OcorrencyId)
+            //    .NotEmpty().WithMessage("OcorrencyId necessary to inform.")
+            //    .NotNull().WithMessage("OcorrencyId necessary to inform.");
         }
     }
 }

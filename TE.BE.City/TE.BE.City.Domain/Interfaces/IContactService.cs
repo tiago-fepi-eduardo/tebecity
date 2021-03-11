@@ -12,6 +12,7 @@ namespace TE.BE.City.Domain.Interfaces
         Task<bool> Put(ContactEntity request);
         Task<bool> Delete(int id);
         Task<IEnumerable<ContactEntity>> GetAll();
-        Task<ContactEntity> GetById(int id);
+        Task<IEnumerable<ContactEntity>> GetClosed(bool closed);
+        Task <IEnumerable<ContactEntity>> GetById(int id);
     }
 }
