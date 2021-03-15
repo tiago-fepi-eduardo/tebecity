@@ -29,24 +29,10 @@ namespace TE.BE.City.Presentation.Controllers
         public async Task<AboutResponseModel> Get()
         {
             var aboutResponseModel = new AboutResponseModel();
-
-            try
-            {
-                var aboutEntity = await _aboutService.Get();
-                _mapper.Map(aboutEntity, aboutResponseModel);
-            }
-            catch (Exception ex)
-            {
-                /*
-                aboutResponseModel.Error = new Model.BaseErrorResponse()
-                {
-                    Code = ex.HResult,
-                    Type = ex.StackTrace,
-                    Message = ex.Message
-                };
-                */
-            }
-
+                       
+            var aboutEntity = await _aboutService.Get();
+            _mapper.Map(aboutEntity, aboutResponseModel);
+           
             return aboutResponseModel;
         }
     }

@@ -10,8 +10,8 @@ namespace TE.BE.City.Domain.Interfaces
     {
         Task<UserEntity> Authenticate(string username, string password);       
         Task<UserEntity> Post(UserEntity request);
-        Task<bool> Put(UserEntity request);
-        Task<bool> Delete(int id);
+        Task<UserEntity> Put(UserEntity request);
+        Task<UserEntity> Delete(int id);
         Task<IEnumerable<UserEntity>> GetAll();
         Task<UserEntity> GetById(int id);
     }

@@ -29,7 +29,7 @@ namespace TE.BE.City.Domain
                 var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
                 Claim claimName = new Claim("fullName", userEntity.FirstName + userEntity.LastName);
-                Claim claimRole = new Claim("role", userEntity.Role.ToString());
+                Claim claimRole = new Claim("role", userEntity.RoleId.ToString());
                 Claim claimEmail = new Claim("email", userEntity.Username);
                 IList<Claim> claims = new List<Claim>()
                 {

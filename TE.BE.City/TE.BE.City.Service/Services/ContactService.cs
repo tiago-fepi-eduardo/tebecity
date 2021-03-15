@@ -20,11 +20,26 @@ namespace TE.BE.City.Service.Services
             _repository = repository;
         }
         
-        public async Task<bool> Delete(int id)
+        public async Task<ContactEntity> Delete(int id)
         {
+            var contactEntity = new ContactEntity();
+
             try
             {
-                return await _repository.Delete(id);
+                var result = await _repository.Delete(id);
+                if (result)
+                    return contactEntity;
+                else
+                {
+                    contactEntity.Error = new ErrorDetail()
+                    {
+                        Code = (int)ErrorCode.SearchHasNoResult,
+                        Type = ErrorCode.SearchHasNoResult.ToString(),
+                        Message = ErrorCode.SearchHasNoResult.GetDescription()
+                    };
+                }
+
+                return contactEntity;
             }
             catch (ExecptionHelper.ExceptionService ex)
             {
@@ -34,9 +49,29 @@ namespace TE.BE.City.Service.Services
 
         public async Task<IEnumerable<ContactEntity>> GetAll()
         {
+            var contactsEntity = new List<ContactEntity>();
+
             try
             {
-                return await _repository.Select();
+                var result = await _repository.Select();
+
+                if (result != null)
+                    return result;
+                else
+                {
+                    var contactEntity = new ContactEntity()
+                    {
+                        Error = new ErrorDetail()
+                        {
+                            Code = (int)ErrorCode.SearchHasNoResult,
+                            Type = ErrorCode.SearchHasNoResult.ToString(),
+                            Message = ErrorCode.SearchHasNoResult.GetDescription()
+                        }
+                    };
+                    contactsEntity.Add(contactEntity);
+                }
+
+                return contactsEntity;
             }
             catch (ExecptionHelper.ExceptionService ex)
             {
@@ -46,9 +81,10 @@ namespace TE.BE.City.Service.Services
 
         public async Task<IEnumerable<ContactEntity>> GetById(int id)
         {
+            var contactsEntity = new List<ContactEntity>();
+
             try
             {
-                var contactsEntity = new List<ContactEntity>();
                 var result =  await _repository.SelectById(id);
 
                 if(result != null)
@@ -77,9 +113,29 @@ namespace TE.BE.City.Service.Services
 
         public async Task<IEnumerable<ContactEntity>> GetClosed(bool closed)
         {
+            var contactsEntity = new List<ContactEntity>();
+
             try
             {
-                return await _repository.Filter(c => c.Closed == closed);
+                var result = await _repository.Filter(c => c.Closed == closed);
+
+                if (result != null)
+                    return result;
+                else
+                {
+                    var contactEntity = new ContactEntity()
+                    {
+                        Error = new ErrorDetail()
+                        {
+                            Code = (int)ErrorCode.SearchHasNoResult,
+                            Type = ErrorCode.SearchHasNoResult.ToString(),
+                            Message = ErrorCode.SearchHasNoResult.GetDescription()
+                        }
+                    };
+                    contactsEntity.Add(contactEntity);
+                }
+
+                return contactsEntity;
             }
             catch (ExecptionHelper.ExceptionService ex)
             {
@@ -87,11 +143,27 @@ namespace TE.BE.City.Service.Services
             }
         }
 
-        public async Task<bool> Post(ContactEntity request)
+        public async Task<ContactEntity> Post(ContactEntity request)
         {
+            var contactEntity = new ContactEntity();
+
             try
             {
-                return await _repository.Insert(request);
+                var result = await _repository.Insert(request);
+
+                if (result)
+                    return contactEntity;
+                else
+                {
+                    contactEntity.Error = new ErrorDetail()
+                    {
+                        Code = (int)ErrorCode.InsertContactFail,
+                        Type = ErrorCode.InsertContactFail.ToString(),
+                        Message = ErrorCode.InsertContactFail.GetDescription()
+                    };
+                }
+
+                return contactEntity;
             }
             catch (ExecptionHelper.ExceptionService ex)
             {
@@ -99,11 +171,31 @@ namespace TE.BE.City.Service.Services
             }
         }
 
-        public async Task<bool> Put(ContactEntity request)
+        public async Task<ContactEntity> Put(ContactEntity request)
         {
+            var contactEntity = new ContactEntity();
+
             try
             {
-                return await _repository.Edit(request);
+                contactEntity = await _repository.SelectById(request.Id);
+                contactEntity.Closed = request.Closed;
+                contactEntity.CreatedAt = request.CreatedAt;
+
+                var result = await _repository.Edit(contactEntity);
+
+                if (result)
+                    return contactEntity;
+                else
+                {
+                    contactEntity.Error = new ErrorDetail()
+                    {
+                        Code = (int)ErrorCode.InsertContactFail,
+                        Type = ErrorCode.InsertContactFail.ToString(),
+                        Message = ErrorCode.InsertContactFail.GetDescription()
+                    };
+                }
+
+                return contactEntity;
             }
             catch (ExecptionHelper.ExceptionService ex)
             {

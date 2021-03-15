@@ -8,9 +8,9 @@ namespace TE.BE.City.Domain.Interfaces
 {
     public interface IContactService
     {
-        Task<bool> Post(ContactEntity request);
-        Task<bool> Put(ContactEntity request);
-        Task<bool> Delete(int id);
+        Task<ContactEntity> Post(ContactEntity request);
+        Task<ContactEntity> Put(ContactEntity request);
+        Task<ContactEntity> Delete(int id);
         Task<IEnumerable<ContactEntity>> GetAll();
         Task<IEnumerable<ContactEntity>> GetClosed(bool closed);
         Task <IEnumerable<ContactEntity>> GetById(int id);

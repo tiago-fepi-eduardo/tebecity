@@ -47,11 +47,25 @@ namespace TE.BE.City.Service.Services
             }
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<UserEntity> Delete(int id)
         {
+            var userEntity = new UserEntity();
+
             try
             {
-                return await _repository.Delete(id);
+                var result = await _repository.Delete(id);
+                if (result)
+                    return userEntity;
+                else
+                {
+                    userEntity.Error = new ErrorDetail()
+                    {
+                        Code = (int)ErrorCode.UserNotIdentified,
+                        Type = ErrorCode.UserNotIdentified.ToString(),
+                        Message = ErrorCode.UserNotIdentified.GetDescription()
+                    };
+                    return userEntity;
+                }
             }
             catch (ExecptionHelper.ExceptionService ex)
             {
@@ -86,29 +100,49 @@ namespace TE.BE.City.Service.Services
         public async Task<UserEntity> Post(UserEntity request)
         {
             var userEntity = new UserEntity();
-
-            request.Password = await _serviceDomain.Encrypt(request.Password);
-
-            var result = await _repository.Insert(request);
-            if (result)
-                return userEntity;
-            else
+            try
             {
-                userEntity.Error = new ErrorDetail()
+                request.Password = await _serviceDomain.Encrypt(request.Password);
+
+                var result = await _repository.Insert(request);
+                if (result)
+                    return userEntity;
+                else
                 {
-                    Code = 1,
-                    Type = "",
-                    Message = ""
-                };
-                return userEntity;
+                    userEntity.Error = new ErrorDetail()
+                    {
+                        Code = 1,
+                        Type = "",
+                        Message = ""
+                    };
+                    return userEntity;
+                }
+            }
+            catch (ExecptionHelper.ExceptionService ex)
+            {
+                throw new ExecptionHelper.ExceptionService(ex.Message);
             }
         }
 
-        public async Task<bool> Put(UserEntity request)
+        public async Task<UserEntity> Put(UserEntity request)
         {
+            var userEntity = new UserEntity();
+
             try
             {
-                return await _repository.Edit(request);
+                var result = await _repository.Edit(request);
+                if (result)
+                    return userEntity;
+                else
+                {
+                    userEntity.Error = new ErrorDetail()
+                    {
+                        Code = (int)ErrorCode.UserNotIdentified,
+                        Type = ErrorCode.UserNotIdentified.ToString(),
+                        Message = ErrorCode.UserNotIdentified.GetDescription()
+                    };
+                    return userEntity;
+                }
             }
             catch (ExecptionHelper.ExceptionService ex)
             {

@@ -47,6 +47,8 @@ namespace TE.BE.City.Presentation.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] UserRequestModel request)
         {
+            var userResponseModel = new UserResponseModel();
+
             var userEntity = new UserEntity();
             userEntity.FirstName = request.FirstName;
             userEntity.LastName = request.LastName;
@@ -54,12 +56,12 @@ namespace TE.BE.City.Presentation.Controllers
             userEntity.Password = request.Password;
             userEntity.Active = true;
             userEntity.Block = false;
-            userEntity.Role = request.Role;
+            userEntity.RoleId = request.RoleId;
             userEntity.CreatedAt = DateTime.Now.ToUniversalTime();
 
             var result = await _userService.Post(userEntity);
 
-            return Response(result.IsSuccess, result);
+            return Response(result.IsSuccess, null);
         }
 
         /// <summary>
@@ -98,10 +100,12 @@ namespace TE.BE.City.Presentation.Controllers
             userEntity.LastName = request.LastName;
             userEntity.Username = request.Username;
             userEntity.Password = request.Password;
-            userEntity.Role = request.Role;
+            userEntity.RoleId = request.RoleId;
             userEntity.CreatedAt = DateTime.Now.ToUniversalTime();
 
-            return Response(true, await _userService.Put(userEntity));
+            var result = await _userService.Put(userEntity);
+
+            return Response(result.IsSuccess, null);
         }
 
         /// <summary>
@@ -111,7 +115,8 @@ namespace TE.BE.City.Presentation.Controllers
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)
         {
-            return Response(true, await _userService.Delete(id));
+            var result = await _userService.Delete(id);
+            return Response(result.IsSuccess, null);
         }
     }
 }
