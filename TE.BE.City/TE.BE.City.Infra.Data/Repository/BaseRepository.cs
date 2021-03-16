@@ -60,6 +60,16 @@ namespace TE.BE.City.Infra.Data.Repository
             return await _context.Set<T>().ToListAsync();
         }
 
+        public async Task<IEnumerable<T>> SelectWithPagination(int skip, int limit)
+        {
+            return await _context.Set<T>().Skip(skip).Take(limit).ToListAsync();
+        }
+
+        public async Task<int> SelectCount()
+        {
+            return await _context.Set<T>().CountAsync();
+        }
+
         public async Task<T> SelectById(int id)
         {
             return await _context.Set<T>().FirstOrDefaultAsync(e => e.Id == id);
@@ -68,6 +78,11 @@ namespace TE.BE.City.Infra.Data.Repository
         public async Task<IEnumerable<T>> Filter(Expression<Func<T, bool>> predicate)
         {
             return await _context.Set<T>().Where(predicate).ToListAsync();
+        }
+
+        public async Task<IEnumerable<T>> FilterWithPagination(Expression<Func<T, bool>> predicate, int skip, int limit)
+        {
+            return await _context.Set<T>().Where(predicate).Skip(skip).Take(limit).ToListAsync();
         }
     }
 }

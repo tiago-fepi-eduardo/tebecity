@@ -16,6 +16,7 @@ namespace TE.BE.City.Presentation.Mappings
             CreateMap<AboutEntity, AboutResponseModel>();
             CreateMap<ContactEntity, ContactResponseModel>();
             CreateMap<UserEntity, AuthenticateResponseModel>();
+            CreateMap<NewsEntity, NewsResponseModel>();
         }
     }
 }

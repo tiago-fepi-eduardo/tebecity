@@ -15,10 +15,16 @@ namespace TE.BE.City.Domain.Interfaces
 
         Task<bool> Edit(T entity);
 
+        Task<IEnumerable<T>> SelectWithPagination(int skip, int limit);
+
         Task<IEnumerable<T>> Select();
+
+        Task<int> SelectCount();
 
         Task<T> SelectById(int id);
 
         Task<IEnumerable<T>> Filter(Expression<Func<T, bool>> predicate);
+
+        Task<IEnumerable<T>> FilterWithPagination(Expression<Func<T, bool>> predicate, int skip, int limit);
     }
 }

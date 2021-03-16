@@ -18,6 +18,7 @@ namespace TE.BE.City.Infra.Data
         public DbSet<OcorrencyDetailEntity> OcorrencyDetail { get; set; }
         public DbSet<AboutEntity> About { get; set; }
         public DbSet<ContactEntity> Contact { get; set; }
+        public DbSet<NewsEntity> News { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -28,6 +29,7 @@ namespace TE.BE.City.Infra.Data
             modelBuilder.Entity<OcorrencyDetailEntity>(new OcorrencyDetailEntityMap().Configure);
             modelBuilder.Entity<AboutEntity>(new AboutEntityMap().Configure);
             modelBuilder.Entity<ContactEntity>(new ContactEntityMap().Configure);
+            modelBuilder.Entity<NewsEntity>(new NewsEntityMap().Configure);
             base.OnModelCreating(modelBuilder);
         }
     }

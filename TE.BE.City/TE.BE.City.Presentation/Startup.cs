@@ -90,6 +90,7 @@ namespace TE.BE.City.Presentation
             services.AddScoped(typeof(IUserDomain), typeof(UserDomain));
             services.AddScoped(typeof(IAboutService), typeof(AboutService));
             services.AddScoped(typeof(IContactService), typeof(ContactService));
+            services.AddScoped(typeof(INewsService), typeof(NewsService));
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
         }

@@ -49,27 +49,30 @@ namespace TE.BE.City.Presentation.Controllers
         /// </summary>
         /// <param name="id"></param>
         [HttpGet]
-        public async Task<IEnumerable<ContactResponseModel>> Get(bool? closed, int id = 0)
+        public async Task<ContactSearchResponseModel> Get(bool? closed, int skip=0, int limit=10, int id = 0)
         {
-            var usersResponseModel = new List<ContactResponseModel>();
+            var contactSearchResponseModel = new ContactSearchResponseModel();
             
             if (id > 0)
             {
                 var userEntity = await _contactService.GetById(id);
-                _mapper.Map(userEntity, usersResponseModel);
+                _mapper.Map(userEntity, contactSearchResponseModel.Contacts);
             }
             else if (closed != null)
             {
-                var userEntity = await _contactService.GetClosed((bool)closed);
-                _mapper.Map(userEntity, usersResponseModel);
+                var userEntity = await _contactService.GetClosed((bool)closed, skip, limit);
+                _mapper.Map(userEntity, contactSearchResponseModel.Contacts);
             }
             else
             {
-                var usersEntity = await _contactService.GetAll();
-                _mapper.Map(usersEntity, usersResponseModel);
+                var usersEntity = await _contactService.GetAll(skip, limit);
+                _mapper.Map(usersEntity, contactSearchResponseModel.Contacts);
             }
-            
-            return usersResponseModel;
+
+            contactSearchResponseModel.Page = skip / limit;
+            contactSearchResponseModel.Total = await _contactService.GetCount(closed);
+
+            return contactSearchResponseModel;
         }
 
         /// <summary>

@@ -47,13 +47,18 @@ namespace TE.BE.City.Service.Services
             }
         }
 
-        public async Task<IEnumerable<ContactEntity>> GetAll()
+        public async Task<IEnumerable<ContactEntity>> GetAll(int skip, int limit)
         {
             var contactsEntity = new List<ContactEntity>();
 
             try
             {
-                var result = await _repository.Select();
+                IEnumerable<ContactEntity> result;
+
+                if (skip == 0 && limit == 0)
+                    result = await _repository.Select();
+                else
+                    result = await _repository.SelectWithPagination(skip, limit);
 
                 if (result != null)
                     return result;
@@ -111,13 +116,18 @@ namespace TE.BE.City.Service.Services
             }
         }
 
-        public async Task<IEnumerable<ContactEntity>> GetClosed(bool closed)
+        public async Task<IEnumerable<ContactEntity>> GetClosed(bool closed, int skip, int limit)
         {
             var contactsEntity = new List<ContactEntity>();
 
             try
             {
-                var result = await _repository.Filter(c => c.Closed == closed);
+                IEnumerable<ContactEntity> result;
+
+                if (skip == 0 && limit ==0)
+                    result = await _repository.Filter(c => c.Closed == closed);
+                else
+                    result = await _repository.FilterWithPagination(c => c.Closed == closed, skip, limit);
 
                 if (result != null)
                     return result;
@@ -136,6 +146,24 @@ namespace TE.BE.City.Service.Services
                 }
 
                 return contactsEntity;
+            }
+            catch (ExecptionHelper.ExceptionService ex)
+            {
+                throw new ExecptionHelper.ExceptionService(ex.Message);
+            }
+        }
+
+        public async Task<int> GetCount(bool? closed)
+        {
+            try
+            {
+                if (closed != null)
+                {
+                    var result = await _repository.Filter(c => c.Closed == closed);
+                    return result.Count();
+                }
+                else
+                    return await _repository.SelectCount();
             }
             catch (ExecptionHelper.ExceptionService ex)
             {
