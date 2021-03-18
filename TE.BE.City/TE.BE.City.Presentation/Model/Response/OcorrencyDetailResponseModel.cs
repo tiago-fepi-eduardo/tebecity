@@ -9,6 +9,6 @@ namespace TE.BE.City.Presentation.Model.Response
     {
         public string Description { get; set; }
         public bool Closed { get; set; }
-        public OcorrencyResponseModel OcorrencyId { get; set; }
+        public int OcorrencyId { get; set; }
     }
 }

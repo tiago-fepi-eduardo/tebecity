@@ -13,6 +13,9 @@ namespace TE.BE.City.Presentation.Mappings
             CreateMap<ContactEntity, ContactResponseModel>();
             CreateMap<UserEntity, AuthenticateResponseModel>();
             CreateMap<NewsEntity, NewsResponseModel>();
+            CreateMap<OcorrencyEntity, OcorrencyResponseModel>();
+            CreateMap<OcorrencyDetailEntity, OcorrencyDetailResponseModel>();
+            CreateMap<OrderStatusEntity, OrderStatusResponseModel>();
 
             CreateMap<OrderEntity, OrderResponseModel>()
                 .ForMember(destination => destination.Ocorrency, map => map.MapFrom(source => new OcorrencyResponseModel

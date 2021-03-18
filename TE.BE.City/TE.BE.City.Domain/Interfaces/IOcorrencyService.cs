@@ -11,5 +11,6 @@ namespace TE.BE.City.Domain.Interfaces
         Task<IEnumerable<OcorrencyEntity>> GetAll(int skip, int limit);
         Task<IEnumerable<OcorrencyEntity>> GetClosed(bool closed, int skip, int limit);
         Task<IEnumerable<OcorrencyEntity>> GetById(int id);
+        Task<int> GetCount(bool? closed);
     }
 }

@@ -124,5 +124,23 @@ namespace TE.BE.City.Service.Services
                 throw new ExecptionHelper.ExceptionService(ex.Message);
             }
         }
+
+        public async Task<int> GetCount(bool? closed)
+        {
+            try
+            {
+                if (closed != null)
+                {
+                    var result = await _repository.Filter(c => c.Closed == closed);
+                    return result.Count();
+                }
+                else
+                    return await _repository.SelectCount();
+            }
+            catch (ExecptionHelper.ExceptionService ex)
+            {
+                throw new ExecptionHelper.ExceptionService(ex.Message);
+            }
+        }
     }
 }
