@@ -11,14 +11,15 @@ namespace TE.BE.City.Infra.Data
             //Empty
         }
 
-        public DbSet<UserEntity> Users { get; set; }
+        public DbSet<UserEntity> User { get; set; }
         public DbSet<RoleEntity> Role { get; set; }
-        public DbSet<OrderEntity> Orders { get; set; }
+        public DbSet<OrderEntity> Order { get; set; }
         public DbSet<OcorrencyEntity> Ocorrency { get; set; }
         public DbSet<OcorrencyDetailEntity> OcorrencyDetail { get; set; }
         public DbSet<AboutEntity> About { get; set; }
         public DbSet<ContactEntity> Contact { get; set; }
         public DbSet<NewsEntity> News { get; set; }
+        public DbSet<OrderStatusEntity> OrderStatus { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +31,7 @@ namespace TE.BE.City.Infra.Data
             modelBuilder.Entity<AboutEntity>(new AboutEntityMap().Configure);
             modelBuilder.Entity<ContactEntity>(new ContactEntityMap().Configure);
             modelBuilder.Entity<NewsEntity>(new NewsEntityMap().Configure);
+            modelBuilder.Entity<OrderStatusEntity>(new OrderStatusEntityMap().Configure);
             base.OnModelCreating(modelBuilder);
         }
     }

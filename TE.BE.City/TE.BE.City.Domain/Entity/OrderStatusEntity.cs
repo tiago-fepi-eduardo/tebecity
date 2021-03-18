@@ -7,5 +7,6 @@ namespace TE.BE.City.Domain.Entity
     public class OrderStatusEntity : BaseEntity
     {
         public string Name { get; set; }
+        public bool Closed { get; set; }
     }
 }

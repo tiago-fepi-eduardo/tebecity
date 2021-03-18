@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TE.BE.City.Infra.CrossCutting;
 
-namespace TE.BE.City.Presentation.Model
+namespace TE.BE.City.Presentation.Model.Response
 {
     public class BaseResponse
     {

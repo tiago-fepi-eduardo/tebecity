@@ -24,18 +24,17 @@ namespace TE.BE.City.Infra.Data.Mappings
                 .HasColumnType("varchar(24)");
 
             builder.Property(c => c.OcorrencyId)
-                .IsRequired()
-                .HasColumnName("ocorrencyId")
+                .HasColumnName("ocorrency")
                 .HasColumnType("int");
 
             builder.Property(c => c.OcorrencyDetailId)
                 .IsRequired()
-                .HasColumnName("ocorrencyDetailId")
+                .HasColumnName("ocorrencyDetail")
                 .HasColumnType("int");
 
             builder.Property(c => c.OrderStatusId)
                 .IsRequired()
-                .HasColumnName("orderStatusId")
+                .HasColumnName("orderStatus")
                 .HasColumnType("int");
 
             builder.Property(c => c.CreatedAt)
@@ -43,9 +42,11 @@ namespace TE.BE.City.Infra.Data.Mappings
                 .HasColumnName("createdAt")
                 .HasColumnType("datetime");
 
+            builder.Ignore(c => c.StartDate);
+            builder.Ignore(c => c.EndDate);
             builder.Ignore(c => c.Error);
-            builder.Ignore(c => c.Ocorrency);
             builder.Ignore(c => c.OrderStatus);
+            builder.Ignore(c => c.Ocorrency);
         }
     }
 }

@@ -21,6 +21,12 @@ namespace TE.BE.City.Infra.Data.Mappings
                 .HasColumnName("name")
                 .HasColumnType("varchar(100)");
 
+            builder.Property(c => c.Closed)
+               .IsRequired()
+               .HasColumnName("closed")
+               .HasColumnType("boolean");
+
+
             builder.Property(c => c.CreatedAt)
                 .IsRequired()
                 .HasColumnName("createdAt")

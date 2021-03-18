@@ -1,19 +1,24 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using TE.BE.City.Domain.Entity;
 using TE.BE.City.Domain.Interfaces;
 using TE.BE.City.Infra.CrossCutting;
 using TE.BE.City.Infra.CrossCutting.Enum;
 using TE.BE.City.Service.Validation;
+using System.Linq.Expressions;
+using LinqKit;
 
 namespace TE.BE.City.Service.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly IRepository<OrderEntity> _repository;
+        private readonly IRepository<OrderEntity> _orderRepository;
+        private readonly IRepository<OcorrencyEntity> _ocorrencyRepository;
+        private readonly IRepository<OcorrencyDetailEntity> _ocorrencyDetailRepository;
+        private readonly IRepository<OrderStatusEntity> _orderStatusRepository;
         private readonly IOrderDomain _serviceDomain;
 
         /// <summary>
@@ -21,9 +26,16 @@ namespace TE.BE.City.Service.Services
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="token"></param>
-        public OrderService(IRepository<OrderEntity> repository, IOrderDomain serviceDomain)
+        public OrderService(IOrderDomain serviceDomain,
+            IRepository<OrderEntity> orderRepository,
+            IRepository<OcorrencyEntity> ocorrencyRepository,
+            IRepository<OcorrencyDetailEntity> ocorrencyDetailRepository,
+            IRepository<OrderStatusEntity> orderStatusRepository)
         {
-            _repository = repository;
+            _orderRepository = orderRepository;
+            _ocorrencyRepository = ocorrencyRepository;
+            _ocorrencyDetailRepository = ocorrencyDetailRepository;
+            _orderStatusRepository = orderStatusRepository;
             _serviceDomain = serviceDomain;
         }
 
@@ -39,7 +51,7 @@ namespace TE.BE.City.Service.Services
 
                 await _serviceDomain.ApplyBusinessRules(request);
 
-                var result = await _repository.Insert(request);
+                var result = await _orderRepository.Insert(request);
 
                 if (result)
                     return orderEntity;
@@ -64,11 +76,67 @@ namespace TE.BE.City.Service.Services
         /// <summary>
         /// Get all itens
         /// </summary>
-        public async Task<IEnumerable<OrderEntity>> GetAll()
+        public async Task<IEnumerable<OrderEntity>> GetAll(OrderEntity request, int skip, int limit)
         {
+            var ordersEntity = new List<OrderEntity>();
+
             try
             {
-                return await _repository.Select();
+                IEnumerable<OrderEntity> result;
+
+                // apply filter
+                var predicate = PredicateBuilder.New<OrderEntity>(true);
+
+                if (request.Id > 0)
+                    predicate.And(model => model.Id == request.Id);
+                if (request.OcorrencyId > 0)
+                    predicate.And(model => model.OcorrencyId == request.OcorrencyId);
+                if (request.OcorrencyDetailId > 0)
+                    predicate.And(model => model.OcorrencyDetailId == request.OcorrencyDetailId);
+                if (request.OrderStatusId > 0)
+                    predicate.And(model => model.OrderStatusId == request.OrderStatusId);
+                if (request.StartDate > DateTime.MinValue)
+                    predicate.And(model => model.CreatedAt >= request.StartDate);
+                if (request.EndDate > DateTime.MinValue)
+                    predicate.And(model => model.CreatedAt <= request.EndDate);
+
+                // get order
+                if (skip == 0 && limit == 0)
+                    result = await _orderRepository.Filter(predicate);
+                else
+                    result = await _orderRepository.FilterWithPagination(predicate, skip, limit);
+
+                if (result != null)
+                {
+                    // get ocorrency
+                    foreach (var item in result.ToList())
+                        item.Ocorrency = await _ocorrencyRepository.SelectById(item.OcorrencyId);
+
+                    // get ocorrency detail
+                    foreach (var item in result.ToList())
+                        item.Ocorrency.OcorrencyDetail = await _ocorrencyDetailRepository.SelectById(item.OcorrencyDetailId);
+
+                    // get order status
+                    foreach (var item in result.ToList())
+                        item.OrderStatus = await _orderStatusRepository.SelectById(item.OrderStatusId);
+
+                    return result;
+                }
+                else
+                {
+                    var orderEntity = new OrderEntity()
+                    {
+                        Error = new ErrorDetail()
+                        {
+                            Code = (int)ErrorCode.SearchHasNoResult,
+                            Type = ErrorCode.SearchHasNoResult.ToString(),
+                            Message = ErrorCode.SearchHasNoResult.GetDescription()
+                        }
+                    };
+                    ordersEntity.Add(orderEntity);
+                }
+
+                return ordersEntity;
             }
             catch (ExecptionHelper.ExceptionService ex)
             {
@@ -83,7 +151,35 @@ namespace TE.BE.City.Service.Services
         {
             try
             {
-                return await _repository.SelectById(id);
+                return await _orderRepository.SelectById(id);
+            }
+            catch (ExecptionHelper.ExceptionService ex)
+            {
+                throw new ExecptionHelper.ExceptionService(ex.Message);
+            }
+        }
+
+        public async Task<int> GetCount(OrderEntity request)
+        {
+            try
+            {
+                var predicate = PredicateBuilder.New<OrderEntity>(true);
+
+                if (request.Id > 0)
+                    predicate.And(model => model.Id == request.Id);                
+                if (request.OcorrencyId > 0)
+                    predicate.And(model => model.OcorrencyId == request.OcorrencyId);
+                if (request.OcorrencyDetailId > 0)
+                    predicate.And(model => model.OcorrencyDetailId == request.OcorrencyDetailId);
+                if (request.OrderStatusId > 0)
+                    predicate.And(model => model.OrderStatusId == request.OrderStatusId);
+                if (request.StartDate > DateTime.MinValue)
+                    predicate.And(model => model.CreatedAt >= request.StartDate);
+                if (request.EndDate > DateTime.MinValue)
+                    predicate.And(model => model.CreatedAt <= request.EndDate);
+
+                var result = await _orderRepository.Filter(predicate);
+                return result.Count();
             }
             catch (ExecptionHelper.ExceptionService ex)
             {
@@ -100,7 +196,7 @@ namespace TE.BE.City.Service.Services
         {
             try
             {
-                return await _repository.Edit(request);
+                return await _orderRepository.Edit(request);
             }
             catch (ExecptionHelper.ExceptionService ex)
             {
@@ -117,7 +213,7 @@ namespace TE.BE.City.Service.Services
         {
             try
             {
-                return await _repository.Delete(id);
+                return await _orderRepository.Delete(id);
             }
             catch (ExecptionHelper.ExceptionService ex)
             {

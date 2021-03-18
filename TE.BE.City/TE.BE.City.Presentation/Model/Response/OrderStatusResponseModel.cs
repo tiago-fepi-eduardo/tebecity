@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TE.BE.City.Presentation.Model.Response
 {
-    public class OcorrencyResponseModel : BaseResponse
+    public class OrderStatusResponseModel : BaseResponse
     {
         public string Name { get; set; }
         public string Description { get; set; }

@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using TE.BE.City.Domain.Entity;
 using TE.BE.City.Domain.Interfaces;
-using TE.BE.City.Presentation.Model;
+using TE.BE.City.Presentation.Model.Request;
+using TE.BE.City.Presentation.Model.Response;
 
 namespace TE.BE.City.Presentation.Controllers
 {
@@ -12,15 +14,17 @@ namespace TE.BE.City.Presentation.Controllers
     [Route("api/[controller]")]
     public class OrderController : BaseController
     {
-        private readonly IOrderService _service;
+        private readonly IMapper _mapper;
+        private readonly IOrderService _orderService;
 
         /// <summary>
         /// Dependency injection to access Service layer.
         /// </summary>
         /// <param name="Service"></param>
-        public OrderController(IOrderService Service) : base()
+        public OrderController(IOrderService Service, IMapper mapper) : base()
         {
-            _service = Service;
+            _mapper = mapper;
+            _orderService = Service;
         }
 
         /// <summary>
@@ -40,7 +44,7 @@ namespace TE.BE.City.Presentation.Controllers
                 orderEntity.OcorrencyDetailId = request.OcorrencyDetailId;
                 orderEntity.CreatedAt = DateTime.Now.ToUniversalTime();
 
-                var result = await _service.Post(orderEntity);
+                var result = await _orderService.Post(orderEntity);
 
                 return Response(result.IsSuccess, result);
             }
@@ -55,19 +59,36 @@ namespace TE.BE.City.Presentation.Controllers
         /// </summary>
         /// <param name="id"></param>
         [HttpGet]
-        public async Task<ActionResult> Get(int id = 0)
+        public async Task<OrderSearchResponseModel> Get([FromBody] OrderSearchRequestModel request)
         {
-            try
+            var orderSearchResponseModel = new OrderSearchResponseModel();
+            var orderEntity = new OrderEntity();
+            orderEntity.Id = request.Id;
+
+            if (orderEntity.Id > 0)
             {
-                if (id > 0)
-                    return Response(true, await _service.GetById(id));
-                else
-                    return Response(true, await _service.GetAll());
+                var userEntity = await _orderService.GetById(orderEntity.Id);
+                var orderResponseModel = new OrderResponseModel();
+                _mapper.Map(userEntity, orderResponseModel);
+                orderSearchResponseModel.Orders.Add(orderResponseModel);
             }
-            catch (Exception ex)
+            else
             {
-                return Response(false, ex.Message);
+                orderEntity.OcorrencyId = request.OcorrencyId;
+                orderEntity.OcorrencyDetailId = request.OcorrencyDetailId;
+                orderEntity.OrderStatusId = request.OrderStatusId;
+                orderEntity.StartDate = request.StartDate;
+                orderEntity.EndDate = request.EndDate;
+
+                var usersEntity = await _orderService.GetAll(orderEntity, request.Skip, request.Limit);
+                _mapper.Map(usersEntity, orderSearchResponseModel.Orders);
             }
+
+            int limit = request.Limit == 0 ? OrderSearchRequestModel.LIMIT : request.Limit;
+            orderSearchResponseModel.Page = request.Skip / limit;
+            orderSearchResponseModel.Total = await _orderService.GetCount(orderEntity);
+
+            return orderSearchResponseModel;
         }
 
         /// <summary>
@@ -85,7 +106,7 @@ namespace TE.BE.City.Presentation.Controllers
                 orderEntity.Longitude = request.Longitude;
                 orderEntity.OcorrencyId = request.OcorrencyId;
 
-                return Response(true, await _service.Put(orderEntity));
+                return Response(true, await _orderService.Put(orderEntity));
             }
             catch (Exception ex)
             {
@@ -102,7 +123,7 @@ namespace TE.BE.City.Presentation.Controllers
         {
             try
             {
-                return Response(true, await _service.Delete(id));
+                return Response(true, await _orderService.Delete(id));
             }
             catch (Exception ex)
             {

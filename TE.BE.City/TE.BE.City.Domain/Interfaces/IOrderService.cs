@@ -11,7 +11,8 @@ namespace TE.BE.City.Domain.Interfaces
         Task<OrderEntity> Post(OrderEntity request);
         Task<bool> Put(OrderEntity request);
         Task<bool> Delete(int id);
-        Task<IEnumerable<OrderEntity>> GetAll();
+        Task<IEnumerable<OrderEntity>> GetAll(OrderEntity request, int skip, int limit);
         Task<OrderEntity> GetById(int id);
+        Task<int> GetCount(OrderEntity request);
     }
 }
