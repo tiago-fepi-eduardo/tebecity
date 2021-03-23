@@ -105,6 +105,9 @@ namespace TE.BE.City.Presentation.Controllers
                 orderEntity.Latitude = request.Latitude;
                 orderEntity.Longitude = request.Longitude;
                 orderEntity.OcorrencyId = request.OcorrencyId;
+                orderEntity.OcorrencyDetailId = request.OcorrencyDetailId;
+                orderEntity.OrderStatusId = request.OrderStatusId;
+                orderEntity.CreatedAt = DateTime.Now.ToUniversalTime();
 
                 return Response(true, await _orderService.Put(orderEntity));
             }
