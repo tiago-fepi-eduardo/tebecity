@@ -55,11 +55,11 @@ namespace TE.BE.City.Presentation.Controllers
         }
 
         /// <summary>
-        /// Get all item if id is null or 0. Get one item by id.
+        /// Get all items based on filter.
         /// </summary>
         /// <param name="id"></param>
         [HttpPatch]
-        public async Task<OrderSearchResponseModel> Get([FromBody] OrderSearchRequestModel request)
+        public async Task<OrderSearchResponseModel> Patch([FromBody] OrderSearchRequestModel request)
         {
             var orderSearchResponseModel = new OrderSearchResponseModel();
             var orderEntity = new OrderEntity();

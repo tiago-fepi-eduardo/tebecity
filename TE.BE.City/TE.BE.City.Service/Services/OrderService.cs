@@ -96,9 +96,9 @@ namespace TE.BE.City.Service.Services
                 if (request.OrderStatusId > 0)
                     predicate.And(model => model.OrderStatusId == request.OrderStatusId);
                 if (request.StartDate > DateTime.MinValue)
-                    predicate.And(model => model.CreatedAt >= request.StartDate);
+                    predicate.And(model => model.CreatedAt.Date >= request.StartDate.Date);
                 if (request.EndDate > DateTime.MinValue)
-                    predicate.And(model => model.CreatedAt <= request.EndDate);
+                    predicate.And(model => model.CreatedAt.Date <= request.EndDate.Date);
 
                 // get order
                 if (skip == 0 && limit == 0)
@@ -151,7 +151,34 @@ namespace TE.BE.City.Service.Services
         {
             try
             {
-                return await _orderRepository.SelectById(id);
+                var result = await _orderRepository.SelectById(id);
+
+                if (result != null)
+                {
+                    // get ocorrency
+                    result.Ocorrency = await _ocorrencyRepository.SelectById(result.OcorrencyId);
+
+                    // get ocorrency detail
+                    result.Ocorrency.OcorrencyDetail = await _ocorrencyDetailRepository.SelectById(result.OcorrencyDetailId);
+
+                    // get order status
+                    result.OrderStatus = await _orderStatusRepository.SelectById(result.OrderStatusId);
+
+                    return result;
+                }
+                else
+                {
+                    var orderEntity = new OrderEntity()
+                    {
+                        Error = new ErrorDetail()
+                        {
+                            Code = (int)ErrorCode.SearchHasNoResult,
+                            Type = ErrorCode.SearchHasNoResult.ToString(),
+                            Message = ErrorCode.SearchHasNoResult.GetDescription()
+                        }
+                    };
+                    return orderEntity;
+                }
             }
             catch (ExecptionHelper.ExceptionService ex)
             {
@@ -174,9 +201,9 @@ namespace TE.BE.City.Service.Services
                 if (request.OrderStatusId > 0)
                     predicate.And(model => model.OrderStatusId == request.OrderStatusId);
                 if (request.StartDate > DateTime.MinValue)
-                    predicate.And(model => model.CreatedAt >= request.StartDate);
+                    predicate.And(model => model.CreatedAt.Date >= request.StartDate.Date);
                 if (request.EndDate > DateTime.MinValue)
-                    predicate.And(model => model.CreatedAt <= request.EndDate);
+                    predicate.And(model => model.CreatedAt.Date <= request.EndDate.Date);
 
                 var result = await _orderRepository.Filter(predicate);
                 return result.Count();
