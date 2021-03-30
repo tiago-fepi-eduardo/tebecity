@@ -19,7 +19,7 @@ namespace TE.BE.City.Service.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<OcorrencyEntity>> GetAll(int skip, int limit)
+        public async Task<IEnumerable<OcorrencyEntity>> GetAll(bool closed, int skip, int limit)
         {
             var contactsEntity = new List<OcorrencyEntity>();
 
@@ -28,9 +28,9 @@ namespace TE.BE.City.Service.Services
                 IEnumerable<OcorrencyEntity> result;
 
                 if (skip == 0 && limit == 0)
-                    result = await _repository.Select();
+                    result = await _repository.Filter(c => c.Closed == closed);
                 else
-                    result = await _repository.SelectWithPagination(skip, limit);
+                    result = await _repository.FilterWithPagination(c => c.Closed == closed, skip, limit);
 
                 if (result != null)
                     return result;
@@ -66,43 +66,6 @@ namespace TE.BE.City.Service.Services
 
                 if (result != null)
                     contactsEntity.Add(result);
-                else
-                {
-                    var contactEntity = new OcorrencyEntity()
-                    {
-                        Error = new ErrorDetail()
-                        {
-                            Code = (int)ErrorCode.SearchHasNoResult,
-                            Type = ErrorCode.SearchHasNoResult.ToString(),
-                            Message = ErrorCode.SearchHasNoResult.GetDescription()
-                        }
-                    };
-                    contactsEntity.Add(contactEntity);
-                }
-
-                return contactsEntity;
-            }
-            catch (ExecptionHelper.ExceptionService ex)
-            {
-                throw new ExecptionHelper.ExceptionService(ex.Message);
-            }
-        }
-
-        public async Task<IEnumerable<OcorrencyEntity>> GetClosed(bool closed, int skip, int limit)
-        {
-            var contactsEntity = new List<OcorrencyEntity>();
-
-            try
-            {
-                IEnumerable<OcorrencyEntity> result;
-
-                if (skip == 0 && limit == 0)
-                    result = await _repository.Filter(c => c.Closed == closed);
-                else
-                    result = await _repository.FilterWithPagination(c => c.Closed == closed, skip, limit);
-
-                if (result != null)
-                    return result;
                 else
                 {
                     var contactEntity = new OcorrencyEntity()

@@ -19,7 +19,7 @@ namespace TE.BE.City.Service.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<OcorrencyDetailEntity>> GetAll(int skip, int limit)
+        public async Task<IEnumerable<OcorrencyDetailEntity>> GetAll(bool closed, int skip, int limit)
         {
             var ocorrencyDetailEntity = new List<OcorrencyDetailEntity>();
 
@@ -28,9 +28,9 @@ namespace TE.BE.City.Service.Services
                 IEnumerable<OcorrencyDetailEntity> result;
 
                 if (skip == 0 && limit == 0)
-                    result = await _repository.Select();
+                    result = await _repository.Filter(c => c.Closed == closed);
                 else
-                    result = await _repository.SelectWithPagination(skip, limit);
+                    result = await _repository.FilterWithPagination(c => c.Closed == closed, skip, limit);
 
                 if (result != null)
                     return result;
@@ -88,18 +88,13 @@ namespace TE.BE.City.Service.Services
             }
         }
 
-        public async Task<IEnumerable<OcorrencyDetailEntity>> GetClosed(bool closed, int skip, int limit)
+        public async Task<IEnumerable<OcorrencyDetailEntity>> GetByOcorrencyId(bool closed, int ocorrencyId)
         {
             var ocorrencyDetailEntity = new List<OcorrencyDetailEntity>();
 
             try
             {
-                IEnumerable<OcorrencyDetailEntity> result;
-
-                if (skip == 0 && limit == 0)
-                    result = await _repository.Filter(c => c.Closed == closed);
-                else
-                    result = await _repository.FilterWithPagination(c => c.Closed == closed, skip, limit);
+                var result = await _repository.Filter(c => c.OcorrencyId == ocorrencyId && c.Closed == closed);
 
                 if (result != null)
                     return result;
@@ -125,7 +120,7 @@ namespace TE.BE.City.Service.Services
             }
         }
 
-        public async Task<int> GetCount(bool? closed)
+        public async Task<int> GetCount(bool closed)
         {
             try
             {

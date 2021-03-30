@@ -8,9 +8,9 @@ namespace TE.BE.City.Domain.Interfaces
 {
     public interface IOcorrencyDetailService
     {
-        Task<IEnumerable<OcorrencyDetailEntity>> GetAll(int skip, int limit);
-        Task<IEnumerable<OcorrencyDetailEntity>> GetClosed(bool closed, int skip, int limit);
+        Task<IEnumerable<OcorrencyDetailEntity>> GetAll(bool closed, int skip, int limit);
         Task<IEnumerable<OcorrencyDetailEntity>> GetById(int id);
-        Task<int> GetCount(bool? closed);
+        Task<int> GetCount(bool closed);
+        Task<IEnumerable<OcorrencyDetailEntity>> GetByOcorrencyId(bool closed, int ocorrencyId);
     }
 }

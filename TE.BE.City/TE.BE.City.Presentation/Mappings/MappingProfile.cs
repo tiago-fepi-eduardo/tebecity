@@ -18,28 +18,39 @@ namespace TE.BE.City.Presentation.Mappings
             CreateMap<OrderStatusEntity, OrderStatusResponseModel>();
 
             CreateMap<OrderEntity, OrderResponseModel>()
-                .ForMember(destination => destination.Ocorrency, map => map.MapFrom(source => new OcorrencyResponseModel
+                .ForMember(destination => destination.Ocorrency, map => {
+                    map.PreCondition(src => (src.Ocorrency != null));
+                    map.MapFrom(source => new OcorrencyResponseModel
+                    {
+                        Id = source.Ocorrency.Id,
+                        Name = source.Ocorrency.Name,
+                        Description = source.Ocorrency.Description,
+                        CreatedAt = source.Ocorrency.CreatedAt.Date,
+                        Closed = source.Ocorrency.Closed
+                    });
+                })
+                .ForMember(destination => destination.OcorrencyDetail, map =>
                 {
-                    Id = source.Ocorrency.Id,
-                    Name = source.Ocorrency.Name,
-                    Description = source.Ocorrency.Description,
-                    CreatedAt = source.Ocorrency.CreatedAt,
-                    Closed = source.Ocorrency.Closed
-                }))
-                .ForMember(destination => destination.OcorrencyDetail, map => map.MapFrom(source => new OcorrencyDetailResponseModel
+                    map.PreCondition(src => (src.Ocorrency != null && src.Ocorrency.OcorrencyDetail != null));
+                    map.MapFrom(source => new OcorrencyDetailResponseModel
+                    {
+                        Id = source.Ocorrency.OcorrencyDetail.Id,
+                        Description = source.Ocorrency.OcorrencyDetail.Description,
+                        CreatedAt = source.Ocorrency.OcorrencyDetail.CreatedAt.Date,
+                        Closed = source.Ocorrency.OcorrencyDetail.Closed
+                    });
+                })
+                 .ForMember(destination => destination.OrderStatus, map =>
                  {
-                     Id = source.Ocorrency.OcorrencyDetail.Id,
-                     Description = source.Ocorrency.OcorrencyDetail.Description,
-                     CreatedAt = source.Ocorrency.OcorrencyDetail.CreatedAt,
-                     Closed = source.Ocorrency.OcorrencyDetail.Closed
-                }))
-                 .ForMember(destination => destination.OrderStatus, map => map.MapFrom(source => new OrderStatusResponseModel
-                 {
-                     Id = source.OrderStatus.Id,
-                     Name = source.OrderStatus.Name,
-                     CreatedAt = source.OrderStatus.CreatedAt,
-                     Closed = source.Ocorrency.OcorrencyDetail.Closed
-                 }));
+                     map.PreCondition(src => (src.OrderStatus != null));
+                     map.MapFrom(source => new OrderStatusResponseModel
+                     {
+                         Id = source.OrderStatus.Id,
+                         Name = source.OrderStatus.Name,
+                         CreatedAt = source.OrderStatus.CreatedAt.Date,
+                         Closed = source.Ocorrency.OcorrencyDetail.Closed
+                     });
+                 });
         }
     }
 }

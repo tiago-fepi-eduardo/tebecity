@@ -94,6 +94,7 @@ namespace TE.BE.City.Presentation
             services.AddScoped(typeof(IOcorrencyService), typeof(OcorrencyService));
             services.AddScoped(typeof(IOcorrencyDetailService), typeof(OcorrencyDetailService));
             services.AddScoped(typeof(IOrderStatusService), typeof(OrderStatusService));
+            services.AddScoped(typeof(IReportService), typeof(ReportService));
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
         }

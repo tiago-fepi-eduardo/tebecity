@@ -2,7 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using TE.BE.City.Domain.Entity;
 using TE.BE.City.Domain.Interfaces;
 using TE.BE.City.Presentation.Model.Response;
 
@@ -27,13 +30,24 @@ namespace TE.BE.City.Presentation.Controllers
         /// <param name="skip"></param>
         /// <param name="limit"></param>
         [HttpGet]
-        public async Task<OcorrencySearchResponseModel> Get(int skip = 0, int limit = 50)
+        public async Task<OcorrencySearchResponseModel> Get(int id, int skip = 0, int limit = 50)
         {
             var ocorrencySearchResponseModel = new OcorrencySearchResponseModel();
-                       
-            var ocorrencyEntity = await _ocorrencyService.GetAll(skip, limit);
+            IEnumerable<OcorrencyEntity> ocorrencyEntity;
+
+            if (id > 0)
+            {
+                ocorrencyEntity = await _ocorrencyService.GetById(id);
+                ocorrencySearchResponseModel.Total = ocorrencyEntity.Count();
+            }
+            else
+            {
+                ocorrencyEntity = await _ocorrencyService.GetAll(false, skip, limit);
+                ocorrencySearchResponseModel.Total = await _ocorrencyService.GetCount(false);
+            }
+
             _mapper.Map(ocorrencyEntity, ocorrencySearchResponseModel.Ocorrencies);
-           
+
             return ocorrencySearchResponseModel;
         }
     }
