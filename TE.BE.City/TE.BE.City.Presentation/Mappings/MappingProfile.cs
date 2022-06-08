@@ -6,51 +6,47 @@ namespace TE.BE.City.Presentation.Mappings
 {
     public class MappingProfile : Profile
     {
+        /// <summary>
+        /// Mapping only from IN/OUT. Entity -> Model
+        /// </summary>
         public MappingProfile()
         {
-            CreateMap<UserEntity, UserResponseModel>();
-            CreateMap<AboutEntity, AboutResponseModel>();
-            CreateMap<ContactEntity, ContactResponseModel>();
-            CreateMap<UserEntity, AuthenticateResponseModel>();
-            CreateMap<NewsEntity, NewsResponseModel>();
-            CreateMap<OcorrencyEntity, OcorrencyResponseModel>();
-            CreateMap<OcorrencyDetailEntity, OcorrencyDetailResponseModel>();
-            CreateMap<OrderStatusEntity, OrderStatusResponseModel>();
+            CreateMap<UserEntity, UserResponse>();
+            CreateMap<LightEntity, LightResponse>();
+            CreateMap<SewerEntity, SewerResponse>();
+            CreateMap<UserEntity, AuthenticateResponse>();
+            CreateMap<TrashEntity, TrashResponse>();
+            CreateMap<CollectEntity, CollectResponse>();
+            CreateMap<AsphaltEntity, AsphaltResponse>();
+            CreateMap<StatusEntity, StatusResponseModel>();
+            CreateMap<WaterEntity, WaterResponse>();
 
-            CreateMap<OrderEntity, OrderResponseModel>()
-                .ForMember(destination => destination.Ocorrency, map => {
-                    map.PreCondition(src => (src.Ocorrency != null));
-                    map.MapFrom(source => new OcorrencyResponseModel
-                    {
-                        Id = source.Ocorrency.Id,
-                        Name = source.Ocorrency.Name,
-                        Description = source.Ocorrency.Description,
-                        CreatedAt = source.Ocorrency.CreatedAt.Date,
-                        Closed = source.Ocorrency.Closed
-                    });
-                })
-                .ForMember(destination => destination.OcorrencyDetail, map =>
-                {
-                    map.PreCondition(src => (src.Ocorrency != null && src.Ocorrency.OcorrencyDetail != null));
-                    map.MapFrom(source => new OcorrencyDetailResponseModel
-                    {
-                        Id = source.Ocorrency.OcorrencyDetail.Id,
-                        Description = source.Ocorrency.OcorrencyDetail.Description,
-                        CreatedAt = source.Ocorrency.OcorrencyDetail.CreatedAt.Date,
-                        Closed = source.Ocorrency.OcorrencyDetail.Closed
-                    });
-                })
-                 .ForMember(destination => destination.OrderStatus, map =>
-                 {
-                     map.PreCondition(src => (src.OrderStatus != null));
-                     map.MapFrom(source => new OrderStatusResponseModel
-                     {
-                         Id = source.OrderStatus.Id,
-                         Name = source.OrderStatus.Name,
-                         CreatedAt = source.OrderStatus.CreatedAt.Date,
-                         Closed = source.Ocorrency.OcorrencyDetail.Closed
-                     });
-                 });
+                 //.ForMember(destination => destination.Status, map =>
+                 //{
+                 //    map.PreCondition(src => (src.Status != null));
+                 //    map.MapFrom(source => new StatusResponseModel
+                 //    {
+                 //        Id = source.Status.Id,
+                 //        Name = source.Status.Name,
+                 //        CreatedAt = source.Status.CreatedAt.Date,
+                 //        Closed = source.Status.Closed
+                 //    });
+                 //})
+                 //.ForMember(destination => destination.User, map =>
+                 //{
+                 //    map.PreCondition(src => (src.User != null));
+                 //    map.MapFrom(source => new UserResponse
+                 //    {
+                 //        Id = source.Status.Id,
+                 //        FirstName = source.User.FirstName,
+                 //        LastName = source.User.LastName,
+                 //        RoleId = source.User.RoleId.ToString(),
+                 //        Username = source.User.Username,
+                 //        Active = source.User.Active,
+                 //        Block = source.User.Block,
+                 //        CreatedAt = source.User.CreatedAt.Date
+                 //    });
+                 //}); ;
         }
     }
 }

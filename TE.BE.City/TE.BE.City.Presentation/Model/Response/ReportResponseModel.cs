@@ -14,8 +14,8 @@ namespace TE.BE.City.Presentation.Model.Response
             NumberOcorrencyXday = new Dictionary<string, int>();
             NumberOcorrencyXstatusXday = new Dictionary<string, Dictionary<string, int>>();
             NumberOcorrencyXtype = new Dictionary<string, int>();
-            LastIncomes = new List<OrderResponseModel>();
-            LastUpdates = new List<OrderResponseModel>();
+            LastIncomes = new List<WaterResponse>();
+            LastUpdates = new List<WaterResponse>();
         }
         // total of ocorrency peer type. Ex. Sawage=20, Lights=30
         public Dictionary<string, int> NumberOcorrencyXtype { get; set; }
@@ -26,8 +26,8 @@ namespace TE.BE.City.Presentation.Model.Response
         // total of ocorrency peer type. Ex. 01/02/2021|pendent=30,open=10,inExection=5
         public Dictionary<string, Dictionary<string, int>> NumberOcorrencyXstatusXday { get; set; }
 
-        public List<OrderResponseModel> LastIncomes { get; set; }
+        public List<WaterResponse> LastIncomes { get; set; }
 
-        public List<OrderResponseModel> LastUpdates { get; set; }
+        public List<WaterResponse> LastUpdates { get; set; }
     }   
 }

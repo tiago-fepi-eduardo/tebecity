@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TE.BE.City.Service\TE.BE.City.Service.csproj" />
+    <ProjectReference Include="..\TE.BE.City.Domain\TE.BE.City.Domain.csproj" />
     <ProjectReference Include="..\TE.BE.City.Infra.CrossCutting\TE.BE.City.Infra.CrossCutting.csproj" />
     <ProjectReference Include="..\TE.BE.City.Infra.Data\TE.BE.City.Infra.Data.csproj" />
   </ItemGroup>

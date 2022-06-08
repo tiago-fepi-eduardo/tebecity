@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
+using TE.BE.City.Domain;
 using TE.BE.City.Domain.Entity;
 using TE.BE.City.Domain.Interfaces;
 using TE.BE.City.Infra.CrossCutting;
-using System.Linq;
 using TE.BE.City.Infra.CrossCutting.Enum;
 
 namespace TE.BE.City.Service.Services
@@ -13,12 +13,12 @@ namespace TE.BE.City.Service.Services
     public class UserService : IUserService
     {
         private IRepository<UserEntity> _repository;
-        private IUserDomain _serviceDomain;
+        private IUserDomain _userDomain;
 
-        public UserService(IRepository<UserEntity> repository, IUserDomain serviceDomain)
+        public UserService(IRepository<UserEntity> repository, IUserDomain userDomain)
         {
             _repository = repository;
-            _serviceDomain = serviceDomain;
+            _userDomain = userDomain;
         }
         public async Task<UserEntity> Authenticate(string username, string password)
         {
@@ -26,8 +26,8 @@ namespace TE.BE.City.Service.Services
             {
                 var userDb = (await _repository.Filter(c => c.Username == username)).FirstOrDefault();
 
-                if (userDb != null && await _serviceDomain.IsValidPassword(password, userDb.Password))
-                    userDb.Token = await _serviceDomain.GenerateJWTToken(userDb);
+                if (userDb != null && await _userDomain.IsValidPassword(password, userDb.Password))
+                    userDb.Token = await _userDomain.GenerateJWTToken(userDb);
                 else
                 {
                     userDb = new UserEntity();
@@ -99,23 +99,25 @@ namespace TE.BE.City.Service.Services
 
         public async Task<UserEntity> Post(UserEntity request)
         {
-            var userEntity = new UserEntity();
             try
             {
-                request.Password = await _serviceDomain.Encrypt(request.Password);
+                request.Password = await _userDomain.Encrypt(request.Password);
 
                 var result = await _repository.Insert(request);
                 if (result)
-                    return userEntity;
+                {
+                    request.Token = await _userDomain.GenerateJWTToken(request);
+                    return request;
+                }
                 else
                 {
-                    userEntity.Error = new ErrorDetail()
+                    request.Error = new ErrorDetail()
                     {
                         Code = 1,
                         Type = "",
                         Message = ""
                     };
-                    return userEntity;
+                    return request;
                 }
             }
             catch (ExecptionHelper.ExceptionService ex)
@@ -130,9 +132,32 @@ namespace TE.BE.City.Service.Services
 
             try
             {
-                var result = await _repository.Edit(request);
-                if (result)
-                    return userEntity;
+                var user = await _repository.Filter(x => x.Username == request.Username);
+
+                if (user.Any())
+                {
+                    request.Password = await _userDomain.Encrypt(request.Password);
+                    request.CreatedAt = DateTime.Now;
+                    request.Active = user.FirstOrDefault().Active;
+                    request.Block = user.FirstOrDefault().Block;
+                    request.Id = user.FirstOrDefault().Id;
+                    request.RoleId = user.FirstOrDefault().RoleId;
+                    request.Username = user.FirstOrDefault().Username;
+
+                    var result = await _repository.Edit(request);
+                    if (result)
+                        return userEntity;
+                    else
+                    {
+                        userEntity.Error = new ErrorDetail()
+                        {
+                            Code = (int)ErrorCode.UserNotIdentified,
+                            Type = ErrorCode.UserNotIdentified.ToString(),
+                            Message = ErrorCode.UserNotIdentified.GetDescription()
+                        };
+                        return userEntity;
+                    }
+                }
                 else
                 {
                     userEntity.Error = new ErrorDetail()

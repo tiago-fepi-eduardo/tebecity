@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using AutoMapper;
 using TE.BE.City.Presentation.Mappings;
+using System;
 
 namespace TE.BE.City.Presentation
 {
@@ -52,9 +53,12 @@ namespace TE.BE.City.Presentation
             });
                         
             string connectionString = Configuration.GetConnectionString("DefaultConnection");
+            var serverVersion = new MySqlServerVersion(new Version(8, 0, 27));
+
             services.AddDbContext<TEBECityContext>(options => {
-                options.UseMySql(connectionString, options => options.EnableRetryOnFailure());
+                options.UseMySql(connectionString, serverVersion);
                 options.EnableDetailedErrors();
+                options.EnableSensitiveDataLogging();
             });
 
             // Configure JWT token authentication and authorization
@@ -84,17 +88,17 @@ namespace TE.BE.City.Presentation
             // Dependency injection
             services.AddScoped(typeof(TEBECityContext));
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            services.AddScoped(typeof(IOrderService), typeof(OrderService));
-            services.AddScoped(typeof(IOrderDomain), typeof(OrderDomain));
+
+            services.AddScoped(typeof(IWaterService), typeof(WaterService));
             services.AddScoped(typeof(IUserService), typeof(UserService));
-            services.AddScoped(typeof(IUserDomain), typeof(UserDomain));
-            services.AddScoped(typeof(IAboutService), typeof(AboutService));
-            services.AddScoped(typeof(IContactService), typeof(ContactService));
-            services.AddScoped(typeof(INewsService), typeof(NewsService));
-            services.AddScoped(typeof(IOcorrencyService), typeof(OcorrencyService));
-            services.AddScoped(typeof(IOcorrencyDetailService), typeof(OcorrencyDetailService));
-            services.AddScoped(typeof(IOrderStatusService), typeof(OrderStatusService));
+            services.AddScoped(typeof(ILightService), typeof(LightService));
+            services.AddScoped(typeof(ISewerService), typeof(SewerService));
+            services.AddScoped(typeof(ITrashService), typeof(TrashService));
+            services.AddScoped(typeof(ICollectService), typeof(CollectService));
+            services.AddScoped(typeof(IAsphaltService), typeof(AsphaltService));
             services.AddScoped(typeof(IReportService), typeof(ReportService));
+            
+            services.AddScoped(typeof(IUserDomain), typeof(UserDomain));
 
             services.AddMvc(option => option.EnableEndpointRouting = false);
         }

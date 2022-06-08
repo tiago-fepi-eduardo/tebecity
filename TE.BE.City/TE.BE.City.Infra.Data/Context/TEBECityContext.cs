@@ -13,25 +13,25 @@ namespace TE.BE.City.Infra.Data
 
         public DbSet<UserEntity> User { get; set; }
         public DbSet<RoleEntity> Role { get; set; }
-        public DbSet<OrderEntity> Order { get; set; }
-        public DbSet<OcorrencyEntity> Ocorrency { get; set; }
-        public DbSet<OcorrencyDetailEntity> OcorrencyDetail { get; set; }
-        public DbSet<AboutEntity> About { get; set; }
-        public DbSet<ContactEntity> Contact { get; set; }
-        public DbSet<NewsEntity> News { get; set; }
-        public DbSet<OrderStatusEntity> OrderStatus { get; set; }
+        public DbSet<WaterEntity> Water { get; set; }
+        public DbSet<CollectEntity> Collect { get; set; }
+        public DbSet<AsphaltEntity> Asphalt { get; set; }
+        public DbSet<LightEntity> Light { get; set; }
+        public DbSet<SewerEntity> Sewer { get; set; }
+        public DbSet<TrashEntity> Trash { get; set; }
+        public DbSet<StatusEntity> Status { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserEntity>(new UserEntityMap().Configure);
             modelBuilder.Entity<RoleEntity>(new RoleEntityMap().Configure);
-            modelBuilder.Entity<OrderEntity>(new OrderEntityMap().Configure);
-            modelBuilder.Entity<OcorrencyEntity>(new OcorrencyEntityMap().Configure);
-            modelBuilder.Entity<OcorrencyDetailEntity>(new OcorrencyDetailEntityMap().Configure);
-            modelBuilder.Entity<AboutEntity>(new AboutEntityMap().Configure);
-            modelBuilder.Entity<ContactEntity>(new ContactEntityMap().Configure);
-            modelBuilder.Entity<NewsEntity>(new NewsEntityMap().Configure);
-            modelBuilder.Entity<OrderStatusEntity>(new OrderStatusEntityMap().Configure);
+            modelBuilder.Entity<WaterEntity>(new WaterEntityMap().Configure);
+            modelBuilder.Entity<CollectEntity>(new CollectEntityMap().Configure);
+            modelBuilder.Entity<AsphaltEntity>(new AsphaltEntityMap().Configure);
+            modelBuilder.Entity<LightEntity>(new LightEntityMap().Configure);
+            modelBuilder.Entity<SewerEntity>(new SewerEntityMap().Configure);
+            modelBuilder.Entity<TrashEntity>(new TrashEntityMap().Configure);
+            modelBuilder.Entity<StatusEntity>(new StatusEntityMap().Configure);
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TE.BE.City.Infra.CrossCutting;
 
 namespace TE.BE.City.Domain.Entity
 {

@@ -11,8 +11,8 @@ namespace TE.BE.City.Infra.CrossCutting.Enum
         UserNotIdentified = 1000,
         [Description("No data was found.")]
         SearchHasNoResult = 1001,
-        [Description("Error to create order.")]
-        CreateOrderFail = 1002,
+        [Description("Error to create a issue.")]
+        CreateIssueFail = 1002,
         [Description("Error to insert contact.")]
         InsertContactFail = 1003,
     }

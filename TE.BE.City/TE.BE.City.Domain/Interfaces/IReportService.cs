@@ -7,10 +7,10 @@ namespace TE.BE.City.Domain.Interfaces
 {
     public interface IReportService
     {
-        Task<Dictionary<string, int>> GetNumberOcorrencyXtype();
+        //Task<Dictionary<string, int>> GetNumberOcorrencyXtype();
         Task<Dictionary<string, int>> GetNumberOcorrencyXday();
         Task<Dictionary<string, Dictionary<string, int>>> NumberOcorrencyXstatusXday();
-        Task<List<OrderEntity>> LastIncomes();
-        Task<List<OrderEntity>> LastUpdates();
+        Task<List<WaterEntity>> LastIncomes();
+        Task<List<WaterEntity>> LastUpdates();
     }
 }

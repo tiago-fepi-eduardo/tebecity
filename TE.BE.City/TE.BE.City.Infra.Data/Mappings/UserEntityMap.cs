@@ -52,9 +52,15 @@ namespace TE.BE.City.Infra.Data.Mappings
                 .HasColumnName("roleId")
                 .HasColumnType("int");
 
-            builder.Ignore(c => c.Token);
-
+            builder.Ignore(c => c.Status);
+            builder.Ignore(c => c.User);
             builder.Ignore(c => c.Error);
+            builder.Ignore(c => c.Token);
+            builder.Ignore(c => c.EndDate);
+            builder.Ignore(c => c.Latitude);
+            builder.Ignore(c => c.Longitude);
+            builder.Ignore(c => c.StatusId);
+            builder.Ignore(c => c.UserId);
         }
     }
 }
