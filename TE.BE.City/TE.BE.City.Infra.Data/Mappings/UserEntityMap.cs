@@ -17,12 +17,10 @@ namespace TE.BE.City.Infra.Data.Mappings
                 .HasName("id");
 
             builder.Property(c => c.FirstName)
-                .IsRequired()
                 .HasColumnName("firstName")
                 .HasColumnType("varchar(100)");
 
             builder.Property(c => c.LastName)
-                .IsRequired()
                 .HasColumnName("lastName")
                 .HasColumnType("varchar(100)");
 
